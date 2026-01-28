@@ -1,0 +1,102 @@
+;; ** Variables ***********************************************************************
+
+;; System vars
+(deflisten BLIGHT `bash ../scripts/backlight --get`)
+(deflisten BATTERY `bash ../scripts/battery --perc`)
+(deflisten BATTERYICON `bash ../scripts/battery --icon`)
+(deflisten VOLUME `bash ../scripts/audio --get-vol`)
+(deflisten VOLUMEICON `bash ../scripts/audio --get-volicon`)
+(deflisten MIC `bash ../scripts/audio --get-mic`)
+(deflisten MICICON `bash ../scripts/audio --get-micicon`)
+(deflisten NET `bash ../scripts/network`)
+
+;; Calendar vars
+(defpoll day :interval "20h" "date '+%d'")
+(defpoll year :interval "20h" "date '+%Y'")
+
+
+
+;; ** Elements **************************************************************************
+
+;; system sliders
+(defwidget sys_sliders []
+  (box :class "genwin" :vexpand "false" :hexpand "false" :width 325
+	(box :class "slidersbox" :orientation "v" :spacing 10 :halign "center" :valign "center" :space-evenly "false" :vexpand "false" :hexpand "false"
+	  (box :class "volume_bar" :orientation "h" :spacing 20 :space-evenly "false" :vexpand "false" :hexpand "false"
+		(button :width 30 :onclick "bash ../scripts/audio --toggle-vol" 
+	    (label :class "iconvolume" :text VOLUMEICON))
+		(scale :min 0  :max 100 :value VOLUME :active "true" :onchange "bash ../scripts/audio --set-vol {}"))
+	  (box :class "mic_bar" :orientation "h" :spacing 20 :space-evenly "false" :vexpand "false" :hexpand "false"
+		    (button :width 30 :onclick "bash ../scripts/audio --toggle-mic" 
+	      (label :class "iconmic" :text MICICON))
+		    (scale :min 0 :max 100 :value MIC :active "true"  :onchange "bash ../scripts/audio --set-mic {}"))
+	  (box :class "bright_bar" :orientation "h" :spacing 20 :space-evenly "false" :vexpand "false" :hexpand "false"
+		    (button :width 30 :onclick "" 
+		      (label :width 30 :class "iconbright" :text "󰃠"))
+	    (scale :min 1 :max 256 :value BLIGHT :active "true"  :onchange "bash ../scripts/backlight --set {}")))))
+
+
+
+;; battery
+(defwidget battery []
+  (box :class "genwin" :vexpand "false" :hexpand "false" :width 65
+    (box :class "battery" :orientation "v" :spacing 10 :space-evenly "false" :vexpand "false" :hexpand "false"
+	(label :class "baticon" :text BATTERYICON)
+        (label :text BATTERY))))
+
+
+;; network
+(defwidget network []
+  (box :class "genwin" :vexpand "false" :hexpand "true" :orientation "h" :width 100
+	(button :class "btn_net" :onclick "bash ../scripts/network --toggle &" :onmiddleclick ""
+      (label :class "network" :text NET))))
+
+
+;; bluetooth
+(defwidget bluetooth []
+  (box :class "genwin" :vexpand "false" :hexpand "false" :width 30
+	(button :class "btn_bluet" :onclick "blueman-manager &"
+      (label :text ""))))
+
+
+;; Power Button
+(defwidget powerbutton []
+  (box :class "genwin" :vexpand "false" :hexpand "false" :width 30
+	(button :class "btn_poweroff" :onclick "wlogout &" "")))
+
+
+
+
+
+
+;; ** Widgets **************************************************************************
+
+;;system
+(defwidget system []
+  (box :space-evenly "false" :orientation "v" :spacing 10 :width 200
+    (box :class "row" :orientation "h" :space-evenly "false" :spacing 10 :height 30
+      (network)
+      (bluetooth)
+      (powerbutton))
+    (box :class "row" :orientation "h" :space-evenly "false" :spacing 10 :height 60
+      (battery)
+      (sys_sliders))
+  ))
+
+
+
+;; Calendar
+(defwidget cal []
+	(box :class "genwin" :orientation "v"
+	    (calendar :class "cal" :day day :year year)))
+
+;; ******** DASHBOARD ********************************************************************
+(defwidget dashboard []
+  (box :class "background" :space-evenly "false" :orientation "v" :spacing 15 :width 400
+    (system)
+    (cal)))
+
+;; ** Windows *************************************************************************
+
+(defwindow dashboard :stacking "fg" :focusable "false" :monitor 0 :geometry (geometry :anchor "top right" :x 5 :y 5)
+  (dashboard))
