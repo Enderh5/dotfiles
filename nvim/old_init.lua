@@ -177,6 +177,13 @@ require('lazy').setup({
         -- marksman = {
         --   nombre = 'marksman',
         -- },
+        --
+        wgsl_analyzer = {
+          filetypes = { 'wgsl' },
+          command = { 'wgsl-analyzer' },
+          cmd = { 'wgsl-analyzer' },
+          nombre = 'wgsl_analyzer',
+        },
 
         lua_ls = {
           filetypes = { 'lua' },
@@ -359,6 +366,7 @@ require('lazy').setup({
         python = {},
         rust = { 'clippy' },
         cpp = { 'clang-format' },
+        wgsl = { 'wgslfmt' },
       },
     },
   },

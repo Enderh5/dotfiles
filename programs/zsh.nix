@@ -8,6 +8,13 @@
     enable = true;
     enableCompletion = true;
     syntaxHighlighting.enable = true;
+    history = {
+      size = 10000;
+      save = 10000;
+      path = "${config.xdg.dataHome}/zsh/history";
+      share = true; # Share history across sessions
+      ignoreDups = true; # Ignore consecutive duplicates
+    };
 
     shellAliases = {
       ll = "ls -l";
@@ -18,8 +25,6 @@
 
     sessionVariables = { };
 
-    history.size = 10000;
-    history.path = "${config.xdg.dataHome}/zsh/history";
     initContent = ''
       eval "$(direnv hook zsh)"
 

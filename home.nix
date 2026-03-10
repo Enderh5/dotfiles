@@ -58,7 +58,8 @@
       pkgs.libreoffice-fresh
 
       pkgs.zotero
-      pkgs.localsend
+
+      pkgs.sioyek
 
       #Stremio
     ];
