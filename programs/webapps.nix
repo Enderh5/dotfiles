@@ -38,8 +38,18 @@ in
     };
     Matlab = {
       name = "Matlab";
-      exec = "${browser} --app=https://matlab.mathworks.com/";
+      genericName = "Software de cálculo numérico";
+      comment = "Entorno de programación para algoritmos y datos.";
+      exec = "env XDG_DATA_DIRS=\"\" distrobox enter Matlab -- env _JAVA_AWT_WM_NONREPARENTING=1 /home/rodrigo/MATLAB/R2025b/bin/matlab -desktop";
       icon = "matlab";
+      categories = [
+        "Development"
+        "Science"
+        "Education"
+      ];
+      settings = {
+        StartupWMClass = "Matlab R2025b";
+      };
     };
   };
 

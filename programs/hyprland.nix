@@ -8,17 +8,20 @@ let
 in
 {
 
-  home.packages = [
-    pkgs.hyprpaper
-    pkgs.swappy
-    pkgs.grim
-    pkgs.slurp
-    pkgs.xdg-desktop-portal-hyprland
-    pkgs.xdg-desktop-portal
-    pkgs.xdg-utils
-    pkgs.libnotify
-    pkgs.cliphist
-    pkgs.sshfs
+  home.packages = with pkgs; [
+    hyprpaper
+    hyprlock
+    swappy
+    grim
+    slurp
+    xdg-desktop-portal-hyprland
+    xdg-desktop-portal
+    xdg-utils
+    libnotify
+    cliphist
+    sshfs
+    playerctl
+    brightnessctl
   ];
 
   xdg.portal.config = {
@@ -27,23 +30,137 @@ in
       "gtk"
     ];
   };
+
+  home.file.".config/hypr/hyprlock.conf".text = ''
+    # BACKGROUND
+    background {
+        monitor =
+        path = ~/.config/hypr/wallpaper.jpg
+        #blur_passes = 0
+        #contrast = 0.8916
+        #brightness = 0.8172
+        #vibrancy = 0.1696
+        #vibrancy_darkness = 0.0
+    }
+
+    # GENERAL
+    general {
+        no_fade_in = false
+        grace = 0
+        disable_loading_bar = false
+    }
+
+    # GREETINGS
+    label {
+        monitor =
+        text =¡Bienvenido!
+        color = rgba(205, 214, 224, .75)
+        font_size = 55
+        font_family = JetBrainsMono Nerd Font
+        position = 165, 320
+        halign = left
+        valign = center
+    }
+
+    # Time
+    label {
+        monitor =
+        text = cmd[update:1000] echo "<span>$(date +"%I:%M")</span>"
+        color = rgba(205, 214, 224, .75)
+        font_size = 40
+        font_family = JetBrainsMono Nerd Font
+        position = 255, 240
+        halign = left
+        valign = center
+    }
+
+    # Day-Month-Date
+    label {
+        monitor =
+        text = Sunday, September 29
+        color = rgba(205, 214, 224, .75)
+        font_size = 20
+        text_align = left
+        font_family = JetBrainsMono Nerd Font
+        position = 180, 175
+        halign = left
+        valign = center
+    }
+
+
+
+    # USER-BOX
+    shape {
+        monitor =
+        size = 320, 55
+        color = rgba(255, 255, 255, .6)
+        rounding = -1
+        border_size = 0
+        border_color = rgba(255, 255, 255, 1)
+        rotate = 0
+        xray = false # if true, make a "hole" in the background (rectangle of specified size, no rotation)
+
+        position = 170, -140
+        halign = left
+        valign = center
+    }
+
+    # USER
+    label {
+        monitor =
+        text =  $USER
+        color = rgba(${config.lib.stylix.colors.base00}ff)
+        outline_thickness = 0
+        dots_size = 0.2 # Scale of input-field height, 0.2 - 0.8
+        dots_spacing = 0.2 # Scale of dots' absolute size, 0.0 - 1.0
+        dots_center = true
+        font_size = 16
+        font_family = JetBrainsMono Nerd Font
+        position = 281, -140
+        halign = left
+        valign = center
+    }
+
+    # INPUT FIELD
+    input-field {
+        monitor =
+        size = 320, 55
+        outline_thickness = 0
+        dots_size = 0.2 # Scale of input-field height, 0.2 - 0.8
+        dots_spacing = 0.2 # Scale of dots' absolute size, 0.0 - 1.0
+        dots_center = true
+        outer_color = rgba(255, 255, 255, 0)
+        inner_color = rgba(255, 255, 255, 0.1)
+        font_color = rgb(205, 214, 244)
+        fade_on_empty = false
+        font_family = JetBrainsMono Nerd Font
+        placeholder_text = <i><span foreground="##ffffff99">🔒 Enter Pass</span></i>
+        hide_input = false
+        position = 170, -220
+        halign = left
+        valign = center
+    }
+  '';
+
   home.file.".config/hypr/hyprland.conf".text = ''
-    exec-once = hyprpanel 
+    # exec-once = hyprpanel 
     exec-once = syncthingtray --wait
     exec-once = hyprpaper
     exec-once = syncthing 
     # exec-once = systemctl --user enable opentabletdriver.service --now
     exec-once = libinput-gestures
-    exec-once = zapzap
-    # exec-once = localsend_app --hidden
+    #exec-once = zapzap
+    exec-once = localsend_app --hidden
     # exec-once = kdeconnect-indicator
     exec = wl-paste --watch cliphist store
+
 
     input {
         kb_layout = es
         follow_mouse = 1
         touchpad  {
             natural_scroll = yes
+            disable_while_typing = no 
         }
 
         sensitivity = 0 # -1.0 - 1.0, 0 means no modification.
@@ -76,7 +193,6 @@ in
              new_optimizations = true
          }
 
-         blurls = lockscreen
      }
 
     animations  {
@@ -102,15 +218,39 @@ in
 
     gesture = 3, horizontal, workspace
 
+    # Float Dolphin by class
+    windowrule = match:class ^(org.kde.dolphin)$, float 1
 
-    windowrule = float, class:^(org.kde.dolphin)$
-    windowrule = float, title:^(btop)$
-    windowrule = float, title:^(update-sys)$
-    windowrule = float, title: ^(KDE Connect)$
+    # Float specific titles
+    windowrule = match:title ^(btop)$, float 1
+    windowrule = match:title ^(KDE Connect)$, float 1
+    windowrule = match:title ^(update-sys)$, float 1
 
-    windowrule = opacity 0.75,class:^(kitty)$
-    windowrule = animation popin,class:^(org.kde.dolphin)$
-    windowrule = animation popin,class:^(chromium-browser)$
+    # Partial effects by class
+    windowrule = match:class ^(kitty)$, opacity 0.75
+    windowrule = match:class ^(org.kde.dolphin)$, animation popin
+    windowrule = match:class ^(chromium-browser)$, animation popin
+
+    #Teclas especiales
+    bind = SUPER, L, exec, hyprlock
+    bind = CTRL ALT, TAB, exec, togglespecialworkspace
+    bindl = , XF86AudioPlay, exec, playerctl play-pause
+    bindl = , XF86AudioStop, exec, playerctl stop
+    bindl = , XF86AudioPrev, exec, playerctl previous
+    bindl = , XF86AudioNext, exec, playerctl next
+
+    # Volumen (usa wpctl si estás en PipeWire/WirePlumber)
+    bindl = , XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+    binde = , XF86AudioLowerVolume, exec, wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%-
+    binde = , XF86AudioRaiseVolume, exec, wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+
+
+    binde = , XF86MonBrightnessDown, exec, brightnessctl set 5%-
+    binde = , XF86MonBrightnessUp, exec, brightnessctl set 5%+
+
+    # Mic mute
+    bindl = , XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+
+    bind = , XF86Cut, exec, slurp | grim -g - - | wl-copy
 
     bind = ${mainMod}, Q, exec, kitty
     bind = ALT, F4, killactive,
@@ -196,10 +336,13 @@ in
   };
 
   home.file.".config/hypr/hyprpaper.conf".text = ''
-    preload = ${config.home.homeDirectory}/.config/hypr/wallpaper.jpg
-    wallpaper = eDP-1,${config.home.homeDirectory}/.config/hypr/wallpaper.jpg
-    wallpaper = ,${config.home.homeDirectory}/.config/hypr/wallpaper.jpg
+    wallpaper {
+        monitor = 
+        path = ${config.home.homeDirectory}/.config/hypr/wallpaper.jpg
+        fit_mode = cover
+    }
   '';
 
   home.file.".config/hypr/wallpaper.jpg".source = ../images/wallpaper.jpg;
+
 }

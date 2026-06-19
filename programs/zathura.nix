@@ -7,7 +7,7 @@
 }:
 {
   programs.zathura = {
-    enable = true;
+    enable = false;
     options = {
       adjust-open = "best-fit";
       pages-per-row = 1;

@@ -21,7 +21,7 @@ return {
     workspaces = {
       {
         name = 'Apuntes',
-        path = '~/Documents/Apuntes',
+        path = '~/Documentos/Apuntes',
       },
     },
   },

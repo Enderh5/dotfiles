@@ -2,66 +2,70 @@
   pkgs,
   lib,
   stylix,
+  config,
   ...
 }:
+let
+  HOME = "/home/rodrigo";
+in
 {
 
   home = {
     username = "rodrigo";
-    homeDirectory = "/home/rodrigo";
+    homeDirectory = HOME;
 
     stateVersion = "25.11";
 
-    packages = [
-      # pkgs.xterm
+    packages = with pkgs; [
+      ghostty
+      localsend
       #Uni
-      pkgs.obsidian
-      pkgs.postman
-      pkgs.geogebra6
-      pkgs.nerd-fonts.jetbrains-mono
-      pkgs.texliveFull
+      obsidian
+      postman
+      geogebra6
+      nerd-fonts.jetbrains-mono
+      texliveFull
 
       #SO
-      pkgs.adwaita-icon-theme
-      pkgs.tmux
-      pkgs.tmuxinator
-      pkgs.cargo
-      pkgs.ripgrep
-      pkgs.gtk4
-      pkgs.libinput-gestures
-      pkgs.wmctrl
+      adwaita-icon-theme
+      tmux
+      tmuxinator
+      cargo
+      ripgrep
+      gtk4
+      libinput-gestures
+      wmctrl
       #Miscelanea
-      pkgs.zapzap
-      pkgs.thunderbird
-      pkgs.vlc
+      zapzap
+      thunderbird
+      vlc
 
       #Nvim
-      pkgs.git
-      pkgs.gcc
-      pkgs.unzip
-      pkgs.fzf
-      pkgs.cbfmt
-      pkgs.tree-sitter
-      pkgs.marksman
-      pkgs.lua-language-server
-      pkgs.stylua
+      git
+      gcc
+      unzip
+      fzf
+      cbfmt
+      tree-sitter
+      marksman
+      lua-language-server
+      stylua
 
-      pkgs.chromium
+      chromium
 
-      pkgs.xfce.exo
-      pkgs.gvfs
-      pkgs.udisks2
+      xfce4-exo
+      gvfs
+      udisks2
 
-      pkgs.nix-direnv
-      pkgs.kdePackages.qtmultimedia
+      nix-direnv
+      kdePackages.qtmultimedia
 
-      pkgs.libreoffice-fresh
+      libreoffice-fresh
 
-      pkgs.zotero
+      zotero
 
-      pkgs.sioyek
-
-      #Stremio
+      fastfetch
+      (import ./pkgs/mossel { inherit pkgs; })
     ];
 
     sessionVariables = {
@@ -76,10 +80,12 @@
   };
 
   imports = [
-    # ./programs/waybar.nix
+    ./programs/waybar.nix
     ./stylix.nix
+    ./programs/sioyek.nix
     ./programs/zsh.nix
     ./programs/hyprland.nix
+    ./programs/niri.nix
     ./programs/starship.nix
     ./programs/rofi.nix
     ./programs/tmux.nix
@@ -112,6 +118,7 @@
         ExecStart = "${pkgs.udiskie}/bin/udiskie --tray --automount --notify";
       };
     };
+
   };
 
   xdg = {
@@ -135,5 +142,7 @@
         "x-scheme-handler/kdeconnect" = [ "kdeconnect-handler.desktop" ];
       };
     };
+
   };
+
 }

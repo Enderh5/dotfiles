@@ -31,8 +31,13 @@ let
 in
 {
   stylix.targets.hyprpanel.enable = false;
+
+  home.packages = with pkgs; [
+    librsvg
+    hyprshutdown
+  ];
   programs.hyprpanel = {
-    enable = true;
+    enable = false;
 
     settings = {
       "bar" = {
@@ -303,9 +308,10 @@ in
         "transition" = "crossfade";
         "volume" = {
           "raiseMaximumVolume" = false;
-          "scrollDown" = "hyprpanel vol -5";
-          "scrollUp" = "hyprpanel vol +5";
+          "scrollDown" = "hyprpanel vol -10";
+          "scrollUp" = "hyprpanel vol +10";
         };
+
       };
 
       "notifications" = {
@@ -1103,7 +1109,7 @@ in
 
       {
         label = "lock";
-        action = "loginctl lock-session";
+        action = "hyprlock";
         text = "Lock";
         keybind = "l";
       }
@@ -1115,13 +1121,13 @@ in
       }
       {
         label = "logout";
-        action = "hyprctl dispatch exit";
+        action = "sh -lc 'hyprshutdown || niri msg action quit'";
         text = "Logout";
         keybind = "e";
       }
       {
         label = "shutdown";
-        action = "systemctl poweroff";
+        action = "sh -lc 'hyprshutdown --post-cmd \"shutdown -P 0\" || systemctl poweroff'";
         text = "Shutdown";
         keybind = "s";
       }
@@ -1133,7 +1139,7 @@ in
       }
       {
         label = "reboot";
-        action = "systemctl reboot";
+        action = "sh -lc 'hyprshutdown -t \"Restarting...\" --post-cmd \"reboot\" || systemctl reboot'";
         text = "Reboot";
         keybind = "r";
       }
@@ -1200,21 +1206,23 @@ in
 
     mkdir -p "$OUT_DIR"
 
-    # Usamos la variable Nix pasada al script
+    # 🔧 limpiar primero
+    rm -f "$OUT_DIR"/*
+
     COLOR="${colorText}"
 
     for svg in "$SVG_DIR"/*.svg; do
       base=$(basename "$svg" .svg)
-      # Reemplaza el fill por el color de la variable Nix
+
       cp "$svg" "$OUT_DIR/''${base}.svg"
-      
+
       sed -E -i \
         -e "s/fill=\"#[0-9a-fA-F]{3,6}\"/fill=\"$COLOR\"/g" \
         -e "s/fill:#[0-9a-fA-F]{3,6}/fill:$COLOR/g" \
         -e "s/stroke=\"#[0-9a-fA-F]{3,6}\"/stroke=\"$COLOR\"/g" \
         -e "s/stroke:#[0-9a-fA-F]{3,6}/stroke:$COLOR/g" \
         "$OUT_DIR/''${base}.svg"
-      # Opcional: generar PNG
+
       ${pkgs.librsvg}/bin/rsvg-convert -w 128 -h 128 "$OUT_DIR/''${base}.svg" > "$OUT_DIR/''${base}.png"
     done
   '';
@@ -1226,5 +1234,4 @@ in
   home.file.".config/wlogout/icons/original/reboot.svg".source = ./wlogout/reboot.svg;
   home.file.".config/wlogout/icons/original/hibernate.svg".source = ./wlogout/hibernate.svg;
 
-  home.packages = [ pkgs.librsvg ];
 }

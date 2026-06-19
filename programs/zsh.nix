@@ -7,7 +7,9 @@
   programs.zsh = {
     enable = true;
     enableCompletion = true;
+    completionInit = "autoload -U compinit && compinit -u";
     syntaxHighlighting.enable = true;
+    dotDir = "${config.xdg.configHome}/zsh";
     history = {
       size = 10000;
       save = 10000;
@@ -26,7 +28,16 @@
     sessionVariables = { };
 
     initContent = ''
-      eval "$(direnv hook zsh)"
+      # --- BLOQUE SOLO PARA EL HOST (NIXOS) ---
+      # Solo ejecutamos esto si NO estamos dentro de un contenedor
+      if [ ! -e /run/.containerenv ] && [ ! -e /.dockerenv ]; then
+        
+        # Cargar direnv si el comando existe
+        if command -v direnv > /dev/null; then
+          eval "$(direnv hook zsh)"
+        fi
+      fi
+      # --- FIN DEL BLOQUE NIXOS ---      
 
       export PATH="$HOME/go/bin:$PATH"
       export PATH="/mnt/c/Users/rafv/AppData/Local/Microsoft/WinGet/Links:$PATH"
@@ -34,7 +45,6 @@
       export EDITOR='nvim'
       export VISUAL='nvim'
       export GRIM_DEFAULT_DIR='~/Pictures/Screenshots'
-      export NIX_LD=$(nix eval --impure --raw --expr 'let pkgs = import <nixpkgs> {}; NIX_LD = pkgs.lib.fileContents "${pkgs.stdenv.cc}/nix-support/dynamic-linker"; in NIX_LD ')
     '';
   };
 }

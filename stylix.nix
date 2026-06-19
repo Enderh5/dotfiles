@@ -5,6 +5,12 @@
   ...
 }:
 {
+  qt = {
+    enable = true;
+    platformTheme.name = "gtk";
+    style.name = "adwaita-dark";
+  };
+
   stylix = {
     enable = true;
     autoEnable = true;
@@ -40,6 +46,14 @@
     # Targets (aplicaciones/entornos)
     targets = {
       gtk.enable = true;
+      mako = {
+        enable = true;
+        colors = {
+          override = {
+            border-color = lib.mkForce "aaa";
+          };
+        };
+      };
       # kde.enable = true;
       # hyprland.enable = false;
     };
@@ -50,4 +64,5 @@
     iconTheme.package = lib.mkForce pkgs.gruvbox-plus-icons;
     iconTheme.name = lib.mkForce "Gruvbox-Plus-Dark";
   };
+
 }

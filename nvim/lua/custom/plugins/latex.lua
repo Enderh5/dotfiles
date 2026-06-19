@@ -6,7 +6,7 @@ return {
     init = function()
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
-      vim.g.vimtex_view_method = 'zathura'
+      vim.g.vimtex_view_method = 'sioyek'
       vim.g.vimtex_compiler_latexmk = {
         options = { '-shell-escape' },
       }

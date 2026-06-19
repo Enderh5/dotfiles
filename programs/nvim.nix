@@ -24,7 +24,7 @@
       pkgs.rustc
     ];
 
-    extraLuaConfig = ''
+    initLua = ''
       package.path = "/home/rodrigo/.config/nvim/?.lua;" .. package.path;
       require("old_init")
     '';
