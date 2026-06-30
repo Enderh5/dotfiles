@@ -9,7 +9,7 @@
   programs.sioyek = {
     enable = true;
     config = {
-      "new-instance" = "1";
+      "new_instance" = "1";
       "should_launch_new_window" = "1";
       "should_launch_new_instance" = "1";
     };
