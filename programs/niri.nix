@@ -94,6 +94,8 @@
       Mod+Alt+F { toggle-windowed-fullscreen;}
       Mod+W { toggle-column-tabbed-display; }
 
+      Mod+F10 { spawn-sh "hyprlock"; }
+
 
       // VOLUMEN
       XF86AudioMute { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }

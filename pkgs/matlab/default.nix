@@ -34,10 +34,9 @@ let
       "Education"
     ];
     keywords = [
-      "xpress"
-      "optimization"
-      "mosel"
-      "simplex"
+      "matlab"
+      "matematicas"
+      "universidad"
     ];
     terminal = false;
     startupNotify = true;

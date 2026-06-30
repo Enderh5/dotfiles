@@ -1106,18 +1106,11 @@ in
   programs.wlogout = {
     enable = true;
     layout = [
-
       {
         label = "lock";
         action = "hyprlock";
         text = "Lock";
         keybind = "l";
-      }
-      {
-        label = "hibernate";
-        action = "systemctl hibernate";
-        text = "Hibernate";
-        keybind = "h";
       }
       {
         label = "logout";
@@ -1126,16 +1119,22 @@ in
         keybind = "e";
       }
       {
+        label = "suspend";
+        action = "systemctl suspend";
+        text = "Sleep";
+        keybind = "u";
+      }
+      {
         label = "shutdown";
         action = "sh -lc 'hyprshutdown --post-cmd \"shutdown -P 0\" || systemctl poweroff'";
         text = "Shutdown";
         keybind = "s";
       }
       {
-        label = "suspend";
-        action = "systemctl suspend";
-        text = "Suspend";
-        keybind = "u";
+        label = "soft-reboot";
+        action = "systemctl soft-reboot";
+        text = "Soft-Reboot";
+        keybind = "q";
       }
       {
         label = "reboot";
@@ -1143,95 +1142,113 @@ in
         text = "Reboot";
         keybind = "r";
       }
+
     ];
     style = ''
       * {
-      	background-image: none;
-      	transition: 0;
+          background-image: none;
+          transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1),
+                      color 250ms cubic-bezier(0.4, 0, 0.2, 1),
+                      border-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
       }
+
+      /* THE WINDOW: Translucent background */
       window {
-      	background-color: rgba(12, 12, 12, 0.1);
+          background-color: rgba(0, 0, 0, 0.4); /* Dark translucent overlay */
       }
+
+      /* THE BUTTONS: Base State (Translucent) */
       button {
-        color: ${colorText};
-      	background-color: ${colorBg};
-      	border: 0.2rem solid ${colorUrgent};
-      	border-radius: 1rem;
-      	margin: 0.8rem;
-      	background-repeat: no-repeat;
-      	background-position: center 20%;
-      	background-size: 20%;
-      	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-      	font-family: ${fonts.monospace.name};
-      	font-size: 1.7rem;
+          color: rgba(255, 255, 255, 1); /* Matugen variable */
+          background-color: rgba(255, 255, 255, 0.15); /* Slight glass effect */
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 20px;
+          margin: 15px;
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: 25%;
+          outline-style: none;
       }
 
-      button:focus, button:active, button:hover {
-      	background-color: ${colorBgAlt};
-      	outline-style: none;
+      /* THE HOVER: "Surprise Me" Matugen Effect */
+      /* Uses your Matugen primary or tertiary color for high contrast */
+
+      button:hover {
+          background-color: ${colorBg}; /* Vibrant theme color */
+          color: rgba(255, 255, 255, 1);
+          border: 2px solid ${colorUrgent}; /* Bold border on hover */
+          background-size: 30%; /* Icon grows slightly for "surprise" feedback */
+          box-shadow: 0 0 20px 2px ${colorUrgent}; /* Neon-like glow effect */
+          margin: 14px;
       }
 
+      /* FOCUS/ACTIVE: Same as hover for consistency */
+      button:active, button:focus {
+          border: 1px solid ${colorUrgent};
+      }
+
+      /* 3. ICON MAPPING (Absolute paths) */
       #lock {
-          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/generated/lock.png");
+          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/Lock-white.png");
       }
 
       #logout {
-          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/generated/logout.png");
+          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/Logout-white.png");
       }
 
       #suspend {
-          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/generated/pause.png");
+          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/Sleep-white.png");
       }
 
-      #hibernate {
-          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/generated/hibernate.png");
+      #soft-reboot {
+          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/Soft-reboot-white.png");
       }
 
       #shutdown {
-          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/generated/shutdown.png");
+          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/Shutdown-white.png");
       }
 
       #reboot {
-          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/generated/reboot.png");
+          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/Reboot-white.png");
       }
     '';
   };
 
-  home.activation.recolorIcons = lib.hm.dag.entryAfter [ "writeHomeFiles" ] ''
-    #!/usr/bin/env bash
-    set -e
+  # home.activation.recolorIcons = lib.hm.dag.entryAfter [ "writeHomeFiles" ] ''
+  #   #!/usr/bin/env bash
+  #   set -e
+  #
+  #   SVG_DIR="$HOME/.config/wlogout/icons/original"
+  #   OUT_DIR="$HOME/.config/wlogout/icons/generated"
+  #
+  #   mkdir -p "$OUT_DIR"
+  #
+  #   # 🔧 limpiar primero
+  #   rm -f "$OUT_DIR"/*
+  #
+  #   COLOR="${colorText}"
+  #
+  #   for svg in "$SVG_DIR"/*.svg; do
+  #     base=$(basename "$svg" .svg)
+  #
+  #     cp "$svg" "$OUT_DIR/''${base}.svg"
+  #
+  #     sed -E -i \
+  #       -e "s/fill=\"#[0-9a-fA-F]{3,6}\"/fill=\"$COLOR\"/g" \
+  #       -e "s/fill:#[0-9a-fA-F]{3,6}/fill:$COLOR/g" \
+  #       -e "s/stroke=\"#[0-9a-fA-F]{3,6}\"/stroke=\"$COLOR\"/g" \
+  #       -e "s/stroke:#[0-9a-fA-F]{3,6}/stroke:$COLOR/g" \
+  #       "$OUT_DIR/''${base}.svg"
+  #
+  #     ${pkgs.librsvg}/bin/rsvg-convert -w 128 -h 128 "$OUT_DIR/''${base}.svg" > "$OUT_DIR/''${base}.png"
+  #   done
+  # '';
 
-    SVG_DIR="$HOME/.config/wlogout/icons/original"
-    OUT_DIR="$HOME/.config/wlogout/icons/generated"
-
-    mkdir -p "$OUT_DIR"
-
-    # 🔧 limpiar primero
-    rm -f "$OUT_DIR"/*
-
-    COLOR="${colorText}"
-
-    for svg in "$SVG_DIR"/*.svg; do
-      base=$(basename "$svg" .svg)
-
-      cp "$svg" "$OUT_DIR/''${base}.svg"
-
-      sed -E -i \
-        -e "s/fill=\"#[0-9a-fA-F]{3,6}\"/fill=\"$COLOR\"/g" \
-        -e "s/fill:#[0-9a-fA-F]{3,6}/fill:$COLOR/g" \
-        -e "s/stroke=\"#[0-9a-fA-F]{3,6}\"/stroke=\"$COLOR\"/g" \
-        -e "s/stroke:#[0-9a-fA-F]{3,6}/stroke:$COLOR/g" \
-        "$OUT_DIR/''${base}.svg"
-
-      ${pkgs.librsvg}/bin/rsvg-convert -w 128 -h 128 "$OUT_DIR/''${base}.svg" > "$OUT_DIR/''${base}.png"
-    done
-  '';
-
-  home.file.".config/wlogout/icons/original/shutdown.svg".source = ./wlogout/shutdown.svg;
-  home.file.".config/wlogout/icons/original/pause.svg".source = ./wlogout/pause.svg;
-  home.file.".config/wlogout/icons/original/lock.svg".source = ./wlogout/lock.svg;
-  home.file.".config/wlogout/icons/original/logout.svg".source = ./wlogout/logout.svg;
-  home.file.".config/wlogout/icons/original/reboot.svg".source = ./wlogout/reboot.svg;
-  home.file.".config/wlogout/icons/original/hibernate.svg".source = ./wlogout/hibernate.svg;
+  home.file.".config/wlogout/icons/Lock-white.png".source = ./wlogout/Lock-white.png;
+  home.file.".config/wlogout/icons/Logout-white.png".source = ./wlogout/Logout-white.png;
+  home.file.".config/wlogout/icons/Reboot-white.png".source = ./wlogout/Reboot-white.png;
+  home.file.".config/wlogout/icons/Shutdown-white.png".source = ./wlogout/Shutdown-white.png;
+  home.file.".config/wlogout/icons/Sleep-white.png".source = ./wlogout/Sleep-white.png;
+  home.file.".config/wlogout/icons/Soft-reboot-white.png".source = ./wlogout/Soft-reboot-white.png;
 
 }

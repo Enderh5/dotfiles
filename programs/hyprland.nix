@@ -134,7 +134,7 @@ in
         font_color = rgb(205, 214, 244)
         fade_on_empty = false
         font_family = JetBrainsMono Nerd Font
-        placeholder_text = <i><span foreground="##ffffff99">🔒 Enter Pass</span></i>
+        placeholder_text = <i><span foreground="##ffffff99">🔒 Contraseña</span></i>
         hide_input = false
         position = 170, -220
         halign = left

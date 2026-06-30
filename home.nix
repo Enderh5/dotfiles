@@ -14,11 +14,12 @@ in
     username = "rodrigo";
     homeDirectory = HOME;
 
-    stateVersion = "25.11";
+    stateVersion = "26.05";
 
     packages = with pkgs; [
-      ghostty
+
       localsend
+
       #Uni
       obsidian
       postman
@@ -35,6 +36,7 @@ in
       gtk4
       libinput-gestures
       wmctrl
+
       #Miscelanea
       zapzap
       thunderbird
@@ -62,10 +64,7 @@ in
 
       libreoffice-fresh
 
-      zotero
-
       fastfetch
-      (import ./pkgs/mossel { inherit pkgs; })
     ];
 
     sessionVariables = {
