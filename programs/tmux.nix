@@ -31,7 +31,7 @@ in
     '';
     plugins = [
       pkgs.tmuxPlugins.vim-tmux-navigator
-      # pkgs.tmuxPlugins.power-theme
+      pkgs.tmuxPlugins.power-theme
     ];
   };
 

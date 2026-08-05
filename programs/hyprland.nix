@@ -24,13 +24,6 @@ in
     brightnessctl
   ];
 
-  xdg.portal.config = {
-    default = [
-      "hyprland"
-      "gtk"
-    ];
-  };
-
   home.file.".config/hypr/hyprlock.conf".text = ''
     # BACKGROUND
     background {
@@ -334,15 +327,5 @@ in
     '';
     executable = true;
   };
-
-  home.file.".config/hypr/hyprpaper.conf".text = ''
-    wallpaper {
-        monitor = 
-        path = ${config.home.homeDirectory}/.config/hypr/wallpaper.jpg
-        fit_mode = cover
-    }
-  '';
-
-  home.file.".config/hypr/wallpaper.jpg".source = ../images/wallpaper.jpg;
 
 }

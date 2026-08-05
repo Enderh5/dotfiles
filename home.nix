@@ -70,7 +70,6 @@ in
     sessionVariables = {
       GTK_USE_PORTAL = "1";
       EDITOR = "nvim";
-      XDG_MENU_PREFIX = lib.mkForce "plasma-";
       XDG_DATA_DIRS = ''
         $XDG_DATA_DIRS:/var/lib/flatpak/exports/share:/home/rodrigo/.local/share/flatpak/exports/share
       '';
@@ -83,13 +82,13 @@ in
     ./stylix.nix
     ./programs/sioyek.nix
     ./programs/zsh.nix
-    ./programs/hyprland.nix
+    #./programs/hyprland.nix
     ./programs/niri.nix
     ./programs/starship.nix
     ./programs/rofi.nix
     ./programs/tmux.nix
     ./programs/libinput-gestures.nix
-    ./programs/hyprpanel.nix
+    #./programs/hyprpanel.nix
     ./programs/yazi.nix
     ./programs/zathura.nix
     ./programs/kitty.nix
@@ -100,10 +99,6 @@ in
   ];
 
   systemd = {
-    user.services.udiskie = {
-      serviceConfig = {
-      };
-    };
     user.services.attic-watch-store = {
       Unit = {
         Description = "Udiskie automount";

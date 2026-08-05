@@ -3,21 +3,29 @@
   home.packages = with pkgs; [
     fuzzel
     mako
-    xdg-desktop-portal-gtk
-    xdg-desktop-portal-gnome
     hyprpaper
     hyprlock
     xwayland-satellite
     udiskie
   ];
 
+  home.file.".config/hypr/hyprpaper.conf".text = ''
+    wallpaper {
+        monitor = 
+        path = ${config.home.homeDirectory}/.config/hypr/wallpaper.jpg
+        fit_mode = cover
+    }
+  '';
+
+  home.file.".config/hypr/wallpaper.jpg".source = ../images/wallpaper.jpg;
+
   home.file.".config/niri/config.kdl".text = ''
     // Programas que se lanzan una sola vez al iniciar Niri
-    //spawn-at-startup  "waybar"
     spawn-at-startup  "syncthingtray --wait"
     spawn-at-startup  "hyprpaper"
     spawn-at-startup  "syncthing"
     spawn-at-startup  "libinput-gestures"
+    spawn-at-startup  "waybar"
     // spawn-at-startup  "zapzap"
     spawn-at-startup  "localsend_app --hidden"
     // spawn-at-startup  "kdeconnect-indicator"

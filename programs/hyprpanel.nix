@@ -30,7 +30,6 @@ let
   colorDeny = "#${colors.base0F}";
 in
 {
-  stylix.targets.hyprpanel.enable = false;
 
   home.packages = with pkgs; [
     librsvg

@@ -7,13 +7,13 @@
 {
   qt = {
     enable = true;
-    platformTheme.name = "gtk3";
-    style.name = "adwaita-dark";
+    platformTheme.name = "kvantum";
+    style.name = "kvantum";
   };
 
   stylix = {
     enable = true;
-    autoEnable = true;
+    autoEnable = false;
     polarity = "dark";
     icons = {
       enable = true;
@@ -46,6 +46,7 @@
     # Targets (aplicaciones/entornos)
     targets = {
       gtk.enable = true;
+      kde.enable = true;
       mako = {
         enable = true;
         colors = {
