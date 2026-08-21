@@ -1,4 +1,27 @@
 { pkgs, config, ... }:
+let
+  colors = config.lib.stylix.colors;
+  fonts = config.stylix.fonts;
+
+  colorText = "#${colors.base05}";
+  colorTextAlt = "#${colors.base04}";
+  colorBg = "#${colors.base00}";
+  colorBgAlt = "#${colors.base01}";
+  colorBgHover = "#${colors.base03}";
+  colorSelection = "#${colors.base02}";
+  colorWarning = "#${colors.base0A}";
+  colorUrgent = "#${colors.base09}";
+  colorError = "#${colors.base08}";
+  colorTextDarkBg = "#${colors.base00}";
+  colorHotter = "#${colors.base08}";
+  colorHot = "#${colors.base09}";
+  colorMild = "#${colors.base0A}";
+  colorCold = "#${colors.base0D}";
+  colorColder = "#${colors.base0C}";
+  colorDisbledButton = "#${colors.base04}";
+  colorConfirm = "#${colors.base0B}";
+  colorDeny = "#${colors.base0F}";
+in
 {
   home.packages = with pkgs; [
     fuzzel
@@ -7,6 +30,8 @@
     hyprlock
     xwayland-satellite
     udiskie
+    slurp
+    grim
   ];
 
   home.file.".config/hypr/hyprpaper.conf".text = ''
@@ -57,7 +82,7 @@
         position x=0 y=1080
         variable-refresh-rate on-demand=true
         focus-at-startup
-        backdrop-color "#001100"
+        backdrop-color "${colorBg}"
 
         hot-corners {
             // off
@@ -406,5 +431,123 @@
   '';
 
   services.mako.enable = true;
+
+  programs.wlogout = {
+    enable = true;
+    layout = [
+      {
+        label = "lock";
+        action = "hyprlock";
+        text = "Lock";
+        keybind = "l";
+      }
+      {
+        label = "logout";
+        action = "sh -lc 'hyprshutdown || niri msg action quit'";
+        text = "Logout";
+        keybind = "e";
+      }
+      {
+        label = "suspend";
+        action = "systemctl suspend";
+        text = "Sleep";
+        keybind = "u";
+      }
+      {
+        label = "shutdown";
+        action = "sh -lc 'hyprshutdown --post-cmd \"shutdown -P 0\" || systemctl poweroff'";
+        text = "Shutdown";
+        keybind = "s";
+      }
+      {
+        label = "soft-reboot";
+        action = "systemctl soft-reboot";
+        text = "Soft-Reboot";
+        keybind = "q";
+      }
+      {
+        label = "reboot";
+        action = "sh -lc 'hyprshutdown -t \"Restarting...\" --post-cmd \"reboot\" || systemctl reboot'";
+        text = "Reboot";
+        keybind = "r";
+      }
+
+    ];
+    style = ''
+      * {
+          background-image: none;
+          transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1),
+                      color 250ms cubic-bezier(0.4, 0, 0.2, 1),
+                      border-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      /* THE WINDOW: Translucent background */
+      window {
+          background-color: rgba(0, 0, 0, 0.4); /* Dark translucent overlay */
+      }
+
+      /* THE BUTTONS: Base State (Translucent) */
+      button {
+          color: rgba(255, 255, 255, 1); /* Matugen variable */
+          background-color: rgba(255, 255, 255, 0.15); /* Slight glass effect */
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 20px;
+          margin: 15px;
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: 25%;
+          outline-style: none;
+      }
+
+      /* THE HOVER: "Surprise Me" Matugen Effect */
+      /* Uses your Matugen primary or tertiary color for high contrast */
+
+      button:hover {
+          background-color: ${colorBg}; /* Vibrant theme color */
+          color: rgba(255, 255, 255, 1);
+          border: 2px solid ${colorUrgent}; /* Bold border on hover */
+          background-size: 30%; /* Icon grows slightly for "surprise" feedback */
+          box-shadow: 0 0 20px 2px ${colorUrgent}; /* Neon-like glow effect */
+          margin: 14px;
+      }
+
+      /* FOCUS/ACTIVE: Same as hover for consistency */
+      button:active, button:focus {
+          border: 1px solid ${colorUrgent};
+      }
+
+      /* 3. ICON MAPPING (Absolute paths) */
+      #lock {
+          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/Lock-white.png");
+      }
+
+      #logout {
+          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/Logout-white.png");
+      }
+
+      #suspend {
+          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/Sleep-white.png");
+      }
+
+      #soft-reboot {
+          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/Soft-reboot-white.png");
+      }
+
+      #shutdown {
+          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/Shutdown-white.png");
+      }
+
+      #reboot {
+          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/Reboot-white.png");
+      }
+    '';
+  };
+
+  home.file.".config/wlogout/icons/Lock-white.png".source = ./wlogout/Lock-white.png;
+  home.file.".config/wlogout/icons/Logout-white.png".source = ./wlogout/Logout-white.png;
+  home.file.".config/wlogout/icons/Reboot-white.png".source = ./wlogout/Reboot-white.png;
+  home.file.".config/wlogout/icons/Shutdown-white.png".source = ./wlogout/Shutdown-white.png;
+  home.file.".config/wlogout/icons/Sleep-white.png".source = ./wlogout/Sleep-white.png;
+  home.file.".config/wlogout/icons/Soft-reboot-white.png".source = ./wlogout/Soft-reboot-white.png;
 
 }

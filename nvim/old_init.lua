@@ -280,7 +280,7 @@ require('lazy').setup({
         },
         clangd = {
           filetypes = { 'c', 'cpp' },
-          cmd = { 'clangd', '--compile-commands-dir=build' },
+          cmd = { 'clangd', '--compile-commands-dir=build', '--clang-tidy' },
           on_attach = function(client, bufnr)
             client.server_capabilities.signatureHelpProvider = false
             -- LspOnAttach(client, bufnr)
