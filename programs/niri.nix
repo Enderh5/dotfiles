@@ -1,32 +1,75 @@
-{ pkgs, config, ... }:
+{
+  pkgs,
+  config,
+  hostName,
+  ...
+}:
 let
   colors = config.lib.stylix.colors;
-  fonts = config.stylix.fonts;
 
-  colorText = "#${colors.base05}";
-  colorTextAlt = "#${colors.base04}";
   colorBg = "#${colors.base00}";
-  colorBgAlt = "#${colors.base01}";
-  colorBgHover = "#${colors.base03}";
-  colorSelection = "#${colors.base02}";
-  colorWarning = "#${colors.base0A}";
   colorUrgent = "#${colors.base09}";
-  colorError = "#${colors.base08}";
-  colorTextDarkBg = "#${colors.base00}";
-  colorHotter = "#${colors.base08}";
-  colorHot = "#${colors.base09}";
-  colorMild = "#${colors.base0A}";
-  colorCold = "#${colors.base0D}";
-  colorColder = "#${colors.base0C}";
-  colorDisbledButton = "#${colors.base04}";
-  colorConfirm = "#${colors.base0B}";
-  colorDeny = "#${colors.base0F}";
+  outputConfig =
+    if hostName == "pcdrdg" then
+      ''
+        output "eDP-1" {
+            mode "1920x1080@60.000"
+            scale 1.0
+            position x=0 y=1080
+            variable-refresh-rate on-demand=true
+            focus-at-startup
+            backdrop-color "${config.lib.stylix.colors.base00}"
+
+            hot-corners {
+                bottom-left
+            }
+        }
+        output "HDMI-A-1" {
+            mode "1920x1080@144"
+            scale 1.0
+            position x=0 y=0
+            variable-refresh-rate on-demand=true
+            backdrop-color "${config.lib.stylix.colors.base00}"
+
+            hot-corners {
+                bottom-left
+            }
+        }
+      ''
+    else if hostName == "roderico" then
+      ''
+        output "HDMI-A-1" {
+            // off
+            mode "1920x1080@144"
+            scale 1.0
+            position x=0 y=0
+            variable-refresh-rate on-demand=true
+            backdrop-color "${config.lib.stylix.colors.base00}"
+
+            hot-corners {
+                bottom-left
+            }
+        }
+
+        output "HDMI-A-2" {
+            // off
+            mode "1366x769@59.790"
+            scale 1.0
+            position x=1920 y=600
+            variable-refresh-rate on-demand=true
+            backdrop-color "${config.lib.stylix.colors.base00}"
+
+            hot-corners {
+                bottom-left
+            }
+        }
+      ''
+    else
+      "";
 in
 {
   home.packages = with pkgs; [
     fuzzel
-    mako
-    hyprpaper
     hyprlock
     xwayland-satellite
     udiskie
@@ -34,26 +77,18 @@ in
     grim
   ];
 
-  home.file.".config/hypr/hyprpaper.conf".text = ''
-    wallpaper {
-        monitor = 
-        path = ${config.home.homeDirectory}/.config/hypr/wallpaper.jpg
-        fit_mode = cover
-    }
-  '';
-
-  home.file.".config/hypr/wallpaper.jpg".source = ../images/wallpaper.jpg;
+  home.file.".config/wallpaper.jpg".source = ../images/wallpaper.jpg;
 
   home.file.".config/niri/config.kdl".text = ''
     // Programas que se lanzan una sola vez al iniciar Niri
     spawn-at-startup  "syncthingtray --wait"
-    spawn-at-startup  "hyprpaper"
+    spawn-at-startup  "noctalia"
     spawn-at-startup  "syncthing"
     spawn-at-startup  "libinput-gestures"
     spawn-at-startup  "waybar"
     // spawn-at-startup  "zapzap"
     spawn-at-startup  "localsend_app --hidden"
-    // spawn-at-startup  "kdeconnect-indicator"
+    spawn-at-startup  "kdeconnect-indicator"
 
     // Programa que corre en background continuamente (similar a exec)
     spawn-at-startup  "wl-paste --watch cliphist store"
@@ -73,44 +108,13 @@ in
         scroll-method "two-finger"
         accel-profile "flat"
       }
+      mouse{
+        accel-speed 0.6
+        accel-profile "flat"
+      }
     }
 
-    output "eDP-1" {
-        // off
-        mode "1920x1080@120.030"
-        scale 1.0
-        position x=0 y=1080
-        variable-refresh-rate on-demand=true
-        focus-at-startup
-        backdrop-color "${colorBg}"
-
-        hot-corners {
-            // off
-            top-left
-            // top-right
-            // bottom-left
-            // bottom-right
-        }
-
-        layout {
-            // ...layout settings for eDP-1...
-        }
-
-    }
-
-    output "HDMI-A-1" {
-        // off
-        mode "1920x1080@144"
-        scale 1.0
-        position x=0 y=0
-        variable-refresh-rate on-demand=true
-        backdrop-color "#001100"
-
-        hot-corners {
-            bottom-left
-        }
-    }
-
+    ${outputConfig}
 
     binds {
 
@@ -226,7 +230,7 @@ in
       always-center-single-column
       empty-workspace-above-first
       default-column-display "tabbed"  // se parece al master stack de Hyprland
-      background-color "#003301"
+      background-color "#${config.lib.stylix.colors.base00}"
 
       // Columnas
       preset-column-widths {
@@ -247,18 +251,18 @@ in
       focus-ring {
           on
           width 2
-          inactive-color "${config.lib.stylix.colors.base07}"
-          active-color "${config.lib.stylix.colors.base09}"
-          urgent-color "${config.lib.stylix.colors.base08}"
+          inactive-color "#${config.lib.stylix.colors.base02}"
+          active-color "#${config.lib.stylix.colors.base0D}"
+          urgent-color "#${config.lib.stylix.colors.base08}"
       }
 
       // Bordes (equivalente a border_size + col.active/inactive_border)
       border {
           on
           width 1
-          inactive-color "${config.lib.stylix.colors.base07}"
-          active-color "${config.lib.stylix.colors.base09}"
-          urgent-color "${config.lib.stylix.colors.base08}"
+          inactive-color "#${config.lib.stylix.colors.base01}"
+          active-color "#${config.lib.stylix.colors.base0D}"
+          urgent-color "#${config.lib.stylix.colors.base08}"
       }
 
       // Sombra (equivalente a Hyprland blur + shadow)
@@ -282,15 +286,15 @@ in
           position "right"
           gaps-between-tabs 2
           corner-radius 8
-          active-color "red"
-          inactive-color "gray"
-          urgent-color "blue"
+          active-color "#${config.lib.stylix.colors.base0D}"
+          inactive-color "#${config.lib.stylix.colors.base03}"
+          urgent-color "#${config.lib.stylix.colors.base08}"
       }
 
       // Insert hint (indica dónde se va a abrir la ventana)
       insert-hint {
           on
-          color "${config.lib.stylix.colors.base0D}"
+          color "#${config.lib.stylix.colors.base0E}"
       }
 
       // Struts (espacios reservados para paneles)
@@ -430,8 +434,6 @@ in
     }
   '';
 
-  services.mako.enable = true;
-
   programs.wlogout = {
     enable = true;
     layout = [
@@ -549,5 +551,116 @@ in
   home.file.".config/wlogout/icons/Shutdown-white.png".source = ./wlogout/Shutdown-white.png;
   home.file.".config/wlogout/icons/Sleep-white.png".source = ./wlogout/Sleep-white.png;
   home.file.".config/wlogout/icons/Soft-reboot-white.png".source = ./wlogout/Soft-reboot-white.png;
+
+  home.file.".config/hypr/hyprlock.conf".text = ''
+    # BACKGROUND
+    background {
+        monitor =
+        path = ~/.config/wallpaper.jpg
+        #blur_passes = 0
+        #contrast = 0.8916
+        #brightness = 0.8172
+        #vibrancy = 0.1696
+        #vibrancy_darkness = 0.0
+    }
+
+    # GENERAL
+    general {
+        no_fade_in = false
+        grace = 0
+        disable_loading_bar = false
+    }
+
+    # GREETINGS
+    label {
+        monitor =
+        text =¡Bienvenido!
+        color = rgba(205, 214, 224, .75)
+        font_size = 55
+        font_family = JetBrainsMono Nerd Font
+        position = 165, 320
+        halign = left
+        valign = center
+    }
+
+    # Time
+    label {
+        monitor =
+        text = cmd[update:1000] echo "<span>$(date +"%I:%M")</span>"
+        color = rgba(205, 214, 224, .75)
+        font_size = 40
+        font_family = JetBrainsMono Nerd Font
+        position = 255, 240
+        halign = left
+        valign = center
+    }
+
+    # Day-Month-Date
+    label {
+        monitor =
+        text = Sunday, September 29
+        color = rgba(205, 214, 224, .75)
+        font_size = 20
+        text_align = left
+        font_family = JetBrainsMono Nerd Font
+        position = 180, 175
+        halign = left
+        valign = center
+    }
+
+
+
+    # USER-BOX
+    shape {
+        monitor =
+        size = 320, 55
+        color = rgba(255, 255, 255, .6)
+        rounding = -1
+        border_size = 0
+        border_color = rgba(255, 255, 255, 1)
+        rotate = 0
+        xray = false # if true, make a "hole" in the background (rectangle of specified size, no rotation)
+
+        position = 170, -140
+        halign = left
+        valign = center
+    }
+
+    # USER
+    label {
+        monitor =
+        text =  $USER
+        color = rgba(${config.lib.stylix.colors.base00}ff)
+        outline_thickness = 0
+        dots_size = 0.2 # Scale of input-field height, 0.2 - 0.8
+        dots_spacing = 0.2 # Scale of dots' absolute size, 0.0 - 1.0
+        dots_center = true
+        font_size = 16
+        font_family = JetBrainsMono Nerd Font
+        position = 281, -140
+        halign = left
+        valign = center
+    }
+
+    # INPUT FIELD
+    input-field {
+        monitor =
+        size = 320, 55
+        outline_thickness = 0
+        dots_size = 0.2 # Scale of input-field height, 0.2 - 0.8
+        dots_spacing = 0.2 # Scale of dots' absolute size, 0.0 - 1.0
+        dots_center = true
+        outer_color = rgba(255, 255, 255, 0)
+        inner_color = rgba(255, 255, 255, 0.1)
+        font_color = rgb(205, 214, 244)
+        fade_on_empty = false
+        font_family = JetBrainsMono Nerd Font
+        placeholder_text = <i><span foreground="##ffffff99">🔒 Contraseña</span></i>
+        hide_input = false
+        position = 170, -220
+        halign = left
+        valign = center
+    }
+  '';
 
 }

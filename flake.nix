@@ -44,6 +44,11 @@
 
     nixos-grub-themes.url = "github:jeslie0/nixos-grub-themes";
 
+    noctalia = {
+      url = "github:noctalia-dev/noctalia";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
@@ -63,13 +68,29 @@
     {
 
       homeConfigurations = {
-        rodrigo = home-manager.lib.homeManagerConfiguration {
+        "rodrigo@roderico" = home-manager.lib.homeManagerConfiguration {
           pkgs = pkgs;
           modules = [
+            inputs.noctalia.homeModules.default
             stylix.homeModules.stylix
             ./home.nix
           ];
-          extraSpecialArgs = { inherit inputs; };
+          extraSpecialArgs = {
+            inherit inputs;
+            hostName = "roderico";
+          };
+        };
+        "rodrigo@pcdrdg" = home-manager.lib.homeManagerConfiguration {
+          pkgs = pkgs;
+          modules = [
+            inputs.noctalia.homeModules.default
+            stylix.homeModules.stylix
+            ./home.nix
+          ];
+          extraSpecialArgs = {
+            inherit inputs;
+            hostName = "pcdrdg";
+          };
         };
       };
     };

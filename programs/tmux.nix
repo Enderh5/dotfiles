@@ -28,10 +28,16 @@ in
       set -g status-position top
       set -gq allow-passthrough on
       set -g visual-activity off
+
+      set -g status-style "bg=#${config.lib.stylix.colors.base01},fg=#${config.lib.stylix.colors.base05}"
+      set -g window-status-style "bg=#${config.lib.stylix.colors.base01},fg=#${config.lib.stylix.colors.base05}"
+
+      # Opcional: Darle estilo al elemento activo dentro de la barra
+      set -g window-status-current-style "bg=#${config.lib.stylix.colors.base00},fg=#${config.lib.stylix.colors.base05},bold"
     '';
     plugins = [
       pkgs.tmuxPlugins.vim-tmux-navigator
-      pkgs.tmuxPlugins.power-theme
+      #pkg.tmuxPlugins.power-theme
     ];
   };
 

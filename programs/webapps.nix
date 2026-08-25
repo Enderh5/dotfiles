@@ -36,19 +36,20 @@ in
       exec = "${browser} --app=https://www.mathcha.io/editor";
       icon = "applications-maths";
     };
-    Matlab = {
+    Matlab = lib.mkForce {
       name = "Matlab";
       genericName = "Software de cálculo numérico";
       comment = "Entorno de programación para algoritmos y datos.";
-      exec = "env XDG_DATA_DIRS=\"\" distrobox enter Matlab -- env _JAVA_AWT_WM_NONREPARENTING=1 /home/rodrigo/MATLAB/R2025b/bin/matlab -desktop";
+      exec = "env XDG_DATA_DIRS=\"\" distrobox enter Matlab -- env _JAVA_AWT_WM_NONREPARENTING=1 /home/rodrigo/Uni/Matlab/R2026a/bin/matlab -desktop";
       icon = "matlab";
+      terminal = false;
       categories = [
         "Development"
         "Science"
         "Education"
       ];
       settings = {
-        StartupWMClass = "Matlab R2025b";
+        StartupWMClass = "Matlab R2026b";
       };
     };
   };

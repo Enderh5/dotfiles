@@ -3,10 +3,19 @@
   lib,
   stylix,
   config,
+  inputs,
   ...
 }:
 let
   HOME = "/home/rodrigo";
+  # Wrapper que detecta si viene una URI o si es un inicio normal
+  prismlauncher-wrapper = pkgs.writeShellScriptBin "prismlauncher-wrapper" ''
+    if [ -z "$1" ]; then
+      exec ${pkgs.prismlauncher}/bin/prismlauncher
+    else
+      exec ${pkgs.prismlauncher}/bin/prismlauncher --import "$@"
+    fi
+  '';
 in
 {
 
@@ -17,7 +26,6 @@ in
     stateVersion = "26.05";
 
     packages = with pkgs; [
-
       localsend
 
       #Uni
@@ -65,6 +73,9 @@ in
       libreoffice-fresh
 
       fastfetch
+
+      prismlauncher
+      temurin-bin-21
     ];
 
     sessionVariables = {
@@ -78,7 +89,7 @@ in
   };
 
   imports = [
-    ./programs/waybar.nix
+    #./programs/waybar.nix
     ./stylix.nix
     ./programs/sioyek.nix
     ./programs/zsh.nix
@@ -88,14 +99,12 @@ in
     ./programs/rofi.nix
     ./programs/tmux.nix
     ./programs/libinput-gestures.nix
-    #./programs/hyprpanel.nix
     ./programs/yazi.nix
     ./programs/zathura.nix
     ./programs/kitty.nix
     ./programs/nvim.nix
-    ./programs/nautilus.nix
-    ./programs/firefox.nix
     ./programs/webapps.nix
+    ./programs/noctalia.nix
   ];
 
   systemd = {
@@ -117,23 +126,49 @@ in
 
   xdg = {
     enable = true;
-    desktopEntries = { };
+    desktopEntries = {
+      "org.prismlauncher.PrismLauncher" = {
+        name = "Prism Launcher";
+        # Se llama al wrapper pasando el parámetro %u (que puede ir vacío o llevar la URI)
+        exec = "${prismlauncher-wrapper}/bin/prismlauncher-wrapper %u";
+        icon = "org.prismlauncher.PrismLauncher";
+        mimeType = [
+          "x-scheme-handler/prismlauncher"
+          "x-scheme-handler/curseforge"
+          "application/x-modrinth-modpack+zip"
+          "application/zip"
+        ];
+        terminal = false;
+        type = "Application";
+        settings = {
+          StartupWMClass = "PrismLauncher";
+        };
+      };
+    };
     mimeApps = {
       enable = true;
       associations.added = {
         "application/x-terminal" = [ "kitty.desktop" ];
         "application/zip" = [ "org.kde.ark.desktop" ];
         "application/x-zip-compressed" = [ "org.kde.ark.desktop" ];
-        "x-scheme-handler/http" = [ "firefox.desktop" ];
+        "x-scheme-handler/http" = [ "zen.desktop" ];
+        "x-scheme-handler/https" = [ "zen.desktop" ];
         "x-scheme-handler/kdeconnect" = [ "kdeconnect-handler.desktop" ];
+        "x-scheme-handler/prismlauncher" = [
+          "org.prismlauncher.PrismLauncher.desktop"
+        ];
       };
       defaultApplications = {
         "application/x-terminal" = [ "kitty.desktop" ];
         "application/pdf" = [ "org.pwmt.zathura.desktop" ];
         "application/zip" = [ "org.kde.ark.desktop" ];
         "application/x-zip-compressed" = [ "org.kde.ark.desktop" ];
-        "x-scheme-handler/http" = [ "firefox.desktop" ];
+        "x-scheme-handler/http" = [ "zen.desktop" ];
+        "x-scheme-handler/https" = [ "zen.desktop" ];
         "x-scheme-handler/kdeconnect" = [ "kdeconnect-handler.desktop" ];
+        "x-scheme-handler/prismlauncher" = [
+          "org.prismlauncher.PrismLauncher.desktop"
+        ];
       };
     };
 

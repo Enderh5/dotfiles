@@ -47,14 +47,9 @@
     targets = {
       gtk.enable = true;
       kde.enable = true;
-      mako = {
-        enable = true;
-        colors = {
-          override = {
-            border-color = lib.mkForce "aaa";
-          };
-        };
-      };
+      noctalia.enable = true;
+      zen-browser.enable = true;
+      tmux.enable = true;
       # kde.enable = true;
       # hyprland.enable = false;
     };
