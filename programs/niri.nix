@@ -5,10 +5,6 @@
   ...
 }:
 let
-  colors = config.lib.stylix.colors;
-
-  colorBg = "#${colors.base00}";
-  colorUrgent = "#${colors.base09}";
   outputConfig =
     if hostName == "pcdrdg" then
       ''
@@ -70,7 +66,6 @@ in
 {
   home.packages = with pkgs; [
     fuzzel
-    hyprlock
     xwayland-satellite
     udiskie
     slurp
@@ -81,14 +76,12 @@ in
 
   home.file.".config/niri/config.kdl".text = ''
     // Programas que se lanzan una sola vez al iniciar Niri
-    spawn-at-startup  "syncthingtray --wait"
-    spawn-at-startup  "noctalia"
     spawn-at-startup  "syncthing"
     spawn-at-startup  "libinput-gestures"
     spawn-at-startup  "waybar"
     // spawn-at-startup  "zapzap"
     spawn-at-startup  "localsend_app --hidden"
-    spawn-at-startup  "kdeconnect-indicator"
+    spawn-at-startup  "noctalia"
 
     // Programa que corre en background continuamente (similar a exec)
     spawn-at-startup  "wl-paste --watch cliphist store"
@@ -105,7 +98,7 @@ in
       touchpad {
         tap
         natural-scroll
-        scroll-method "two-finger"
+        scroll-method "two-finger" 
         accel-profile "flat"
       }
       mouse{
@@ -131,21 +124,21 @@ in
       Mod+Alt+F { toggle-windowed-fullscreen;}
       Mod+W { toggle-column-tabbed-display; }
 
-      Mod+F10 { spawn-sh "hyprlock"; }
+      Mod+F10 { spawn-sh "noctalia msg session lock"; }
 
 
       // VOLUMEN
       XF86AudioMute { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
-      XF86AudioLowerVolume { spawn-sh "wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%-"; }
-      XF86AudioRaiseVolume { spawn-sh "wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+"; }
+      XF86AudioLowerVolume { spawn-sh "noctalia msg volume-down"; }
+      XF86AudioRaiseVolume { spawn-sh "noctalia msg volume-up"; }
 
       // MICRO
-      XF86AudioMicMute { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
+      XF86AudioMicMute { spawn-sh "noctalia msg volume-mute"; }
       XF86Favorites { spawn-sh "xdg-open https://www.google.com"; }
 
       // BRILLO
-      XF86MonBrightnessDown { spawn-sh "brightnessctl set 5%-"; }
-      XF86MonBrightnessUp { spawn-sh "brightnessctl set 5%+"; }
+      XF86MonBrightnessDown { spawn-sh "noctalia msg brightness-down"; }
+      XF86MonBrightnessUp { spawn-sh "noctalia msg brightness-up"; }
 
       // SCREENSHOT
       Print {spawn-sh "slurp | grim -g - - | wl-copy";}
@@ -158,12 +151,12 @@ in
       Mod+O { spawn "obsidian"; }
 
       // LAUNCHERS
-      Mod+Space { spawn "~/.config/rofi/launcher.sh"; }
-      Alt+V { spawn-sh "cliphist list | rofi -dmenu | cliphist decode | wl-copy"; }
+      Mod+Space { spawn-sh "noctalia msg panel-toggle launcher"; }
+      Alt+V { spawn-sh "noctalia msg panel-toggle clipboard"; }
 
       // SALIR
       Mod+Shift+M { quit; }
-      Mod+M {spawn "wlogout";}
+      Mod+M {spawn-sh "noctalia msg panel-toggle session";}
 
       // NAVEGACIÓN ENTRE COLUMNAS
       Mod+H { focus-column-left; }
@@ -307,9 +300,16 @@ in
     }
 
     window-rule {
-      geometry-corner-radius 12
+      geometry-corner-radius 20
       clip-to-geometry true
       open-maximized false
+    }
+
+    window-rule {
+      match app-id="dev.noctalia.Noctalia"
+      open-floating true
+      default-column-width { fixed 1080; }
+      default-window-height { fixed 920; }
     }
 
     //Ventanas flotantes de configuracion/utilidad
@@ -331,7 +331,6 @@ in
       match app-id=".blueman-manager-wrapped"
       match app-id="org.pulseaudio.pavucontrol"
 
-      match title="Syncthing Tray"
       match title="nixos | Syncthing"
       match title="nmtui"
 
@@ -429,237 +428,30 @@ in
       }
     }
 
+    layer-rule {
+      match namespace="^noctalia-backdrop"
+      place-within-backdrop true
+    }
+
+    layer-rule {
+      match namespace="^noctalia-(bar-[^\"]+|notification|dock|panel|attached-panel|osd)$"
+      background-effect {
+        xray false
+        // blur false
+      }
+    }
+
+    layer-rule {
+      match namespace="noctalia-window-switcher"
+      background-effect {
+          blur true
+          xray false
+      }
+    }
+
     debug {
       //preview-render "screen-capture"
-    }
-  '';
-
-  programs.wlogout = {
-    enable = true;
-    layout = [
-      {
-        label = "lock";
-        action = "hyprlock";
-        text = "Lock";
-        keybind = "l";
-      }
-      {
-        label = "logout";
-        action = "sh -lc 'hyprshutdown || niri msg action quit'";
-        text = "Logout";
-        keybind = "e";
-      }
-      {
-        label = "suspend";
-        action = "systemctl suspend";
-        text = "Sleep";
-        keybind = "u";
-      }
-      {
-        label = "shutdown";
-        action = "sh -lc 'hyprshutdown --post-cmd \"shutdown -P 0\" || systemctl poweroff'";
-        text = "Shutdown";
-        keybind = "s";
-      }
-      {
-        label = "soft-reboot";
-        action = "systemctl soft-reboot";
-        text = "Soft-Reboot";
-        keybind = "q";
-      }
-      {
-        label = "reboot";
-        action = "sh -lc 'hyprshutdown -t \"Restarting...\" --post-cmd \"reboot\" || systemctl reboot'";
-        text = "Reboot";
-        keybind = "r";
-      }
-
-    ];
-    style = ''
-      * {
-          background-image: none;
-          transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1),
-                      color 250ms cubic-bezier(0.4, 0, 0.2, 1),
-                      border-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
-      }
-
-      /* THE WINDOW: Translucent background */
-      window {
-          background-color: rgba(0, 0, 0, 0.4); /* Dark translucent overlay */
-      }
-
-      /* THE BUTTONS: Base State (Translucent) */
-      button {
-          color: rgba(255, 255, 255, 1); /* Matugen variable */
-          background-color: rgba(255, 255, 255, 0.15); /* Slight glass effect */
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          border-radius: 20px;
-          margin: 15px;
-          background-repeat: no-repeat;
-          background-position: center;
-          background-size: 25%;
-          outline-style: none;
-      }
-
-      /* THE HOVER: "Surprise Me" Matugen Effect */
-      /* Uses your Matugen primary or tertiary color for high contrast */
-
-      button:hover {
-          background-color: ${colorBg}; /* Vibrant theme color */
-          color: rgba(255, 255, 255, 1);
-          border: 2px solid ${colorUrgent}; /* Bold border on hover */
-          background-size: 30%; /* Icon grows slightly for "surprise" feedback */
-          box-shadow: 0 0 20px 2px ${colorUrgent}; /* Neon-like glow effect */
-          margin: 14px;
-      }
-
-      /* FOCUS/ACTIVE: Same as hover for consistency */
-      button:active, button:focus {
-          border: 1px solid ${colorUrgent};
-      }
-
-      /* 3. ICON MAPPING (Absolute paths) */
-      #lock {
-          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/Lock-white.png");
-      }
-
-      #logout {
-          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/Logout-white.png");
-      }
-
-      #suspend {
-          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/Sleep-white.png");
-      }
-
-      #soft-reboot {
-          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/Soft-reboot-white.png");
-      }
-
-      #shutdown {
-          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/Shutdown-white.png");
-      }
-
-      #reboot {
-          background-image: url("file:///home/${config.home.username}/.config/wlogout/icons/Reboot-white.png");
-      }
-    '';
-  };
-
-  home.file.".config/wlogout/icons/Lock-white.png".source = ./wlogout/Lock-white.png;
-  home.file.".config/wlogout/icons/Logout-white.png".source = ./wlogout/Logout-white.png;
-  home.file.".config/wlogout/icons/Reboot-white.png".source = ./wlogout/Reboot-white.png;
-  home.file.".config/wlogout/icons/Shutdown-white.png".source = ./wlogout/Shutdown-white.png;
-  home.file.".config/wlogout/icons/Sleep-white.png".source = ./wlogout/Sleep-white.png;
-  home.file.".config/wlogout/icons/Soft-reboot-white.png".source = ./wlogout/Soft-reboot-white.png;
-
-  home.file.".config/hypr/hyprlock.conf".text = ''
-    # BACKGROUND
-    background {
-        monitor =
-        path = ~/.config/wallpaper.jpg
-        #blur_passes = 0
-        #contrast = 0.8916
-        #brightness = 0.8172
-        #vibrancy = 0.1696
-        #vibrancy_darkness = 0.0
-    }
-
-    # GENERAL
-    general {
-        no_fade_in = false
-        grace = 0
-        disable_loading_bar = false
-    }
-
-    # GREETINGS
-    label {
-        monitor =
-        text =¡Bienvenido!
-        color = rgba(205, 214, 224, .75)
-        font_size = 55
-        font_family = JetBrainsMono Nerd Font
-        position = 165, 320
-        halign = left
-        valign = center
-    }
-
-    # Time
-    label {
-        monitor =
-        text = cmd[update:1000] echo "<span>$(date +"%I:%M")</span>"
-        color = rgba(205, 214, 224, .75)
-        font_size = 40
-        font_family = JetBrainsMono Nerd Font
-        position = 255, 240
-        halign = left
-        valign = center
-    }
-
-    # Day-Month-Date
-    label {
-        monitor =
-        text = Sunday, September 29
-        color = rgba(205, 214, 224, .75)
-        font_size = 20
-        text_align = left
-        font_family = JetBrainsMono Nerd Font
-        position = 180, 175
-        halign = left
-        valign = center
-    }
-
-
-
-    # USER-BOX
-    shape {
-        monitor =
-        size = 320, 55
-        color = rgba(255, 255, 255, .6)
-        rounding = -1
-        border_size = 0
-        border_color = rgba(255, 255, 255, 1)
-        rotate = 0
-        xray = false # if true, make a "hole" in the background (rectangle of specified size, no rotation)
-
-        position = 170, -140
-        halign = left
-        valign = center
-    }
-
-    # USER
-    label {
-        monitor =
-        text =  $USER
-        color = rgba(${config.lib.stylix.colors.base00}ff)
-        outline_thickness = 0
-        dots_size = 0.2 # Scale of input-field height, 0.2 - 0.8
-        dots_spacing = 0.2 # Scale of dots' absolute size, 0.0 - 1.0
-        dots_center = true
-        font_size = 16
-        font_family = JetBrainsMono Nerd Font
-        position = 281, -140
-        halign = left
-        valign = center
-    }
-
-    # INPUT FIELD
-    input-field {
-        monitor =
-        size = 320, 55
-        outline_thickness = 0
-        dots_size = 0.2 # Scale of input-field height, 0.2 - 0.8
-        dots_spacing = 0.2 # Scale of dots' absolute size, 0.0 - 1.0
-        dots_center = true
-        outer_color = rgba(255, 255, 255, 0)
-        inner_color = rgba(255, 255, 255, 0.1)
-        font_color = rgb(205, 214, 244)
-        fade_on_empty = false
-        font_family = JetBrainsMono Nerd Font
-        placeholder_text = <i><span foreground="##ffffff99">🔒 Contraseña</span></i>
-        hide_input = false
-        position = 170, -220
-        halign = left
-        valign = center
+      honor-xdg-activation-with-invalid-serial
     }
   '';
 

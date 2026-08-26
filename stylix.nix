@@ -50,6 +50,10 @@
       noctalia.enable = true;
       zen-browser.enable = true;
       tmux.enable = true;
+      yazi.enable = true;
+      sioyek.enable = true;
+      obsidian.enable = true;
+      neovim.enable = true;
       # kde.enable = true;
       # hyprland.enable = false;
     };

@@ -76,6 +76,7 @@ in
 
       prismlauncher
       temurin-bin-21
+
     ];
 
     sessionVariables = {
@@ -88,6 +89,10 @@ in
 
   };
 
+  services.kdeconnect = {
+    enable = true;
+    indicator = false;
+  };
   imports = [
     #./programs/waybar.nix
     ./stylix.nix
