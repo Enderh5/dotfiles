@@ -52,7 +52,13 @@
       tmux.enable = true;
       yazi.enable = true;
       sioyek.enable = true;
-      obsidian.enable = true;
+      starship.enable = true;
+      obsidian = {
+        enable = true;
+        vaultNames = [
+          "Apuntes"
+        ];
+      };
       neovim.enable = true;
       # kde.enable = true;
       # hyprland.enable = false;

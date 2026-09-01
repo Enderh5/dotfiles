@@ -1,9 +1,5 @@
 {
   pkgs,
-  lib,
-  stylix,
-  config,
-  inputs,
   ...
 }:
 let
@@ -29,7 +25,6 @@ in
       localsend
 
       #Uni
-      obsidian
       postman
       geogebra6
       nerd-fonts.jetbrains-mono
@@ -70,7 +65,7 @@ in
       nix-direnv
       kdePackages.qtmultimedia
 
-      libreoffice-fresh
+      libreoffice-stable
 
       fastfetch
 
@@ -89,45 +84,21 @@ in
 
   };
 
-  services.kdeconnect = {
-    enable = true;
-    indicator = false;
-  };
   imports = [
-    #./programs/waybar.nix
     ./stylix.nix
     ./programs/sioyek.nix
     ./programs/zsh.nix
-    #./programs/hyprland.nix
+    ./programs/obsidian.nix
     ./programs/niri.nix
     ./programs/starship.nix
-    ./programs/rofi.nix
     ./programs/tmux.nix
-    ./programs/libinput-gestures.nix
     ./programs/yazi.nix
-    ./programs/zathura.nix
+    #./programs/zathura.nix
     ./programs/kitty.nix
     ./programs/nvim.nix
     ./programs/webapps.nix
     ./programs/noctalia.nix
   ];
-
-  systemd = {
-    user.services.attic-watch-store = {
-      Unit = {
-        Description = "Udiskie automount";
-        After = [ "graphical-session.target" ];
-        Restart = "on-failure";
-      };
-      Install = {
-        WantedBy = [ "default.target" ];
-      };
-      Service = {
-        ExecStart = "${pkgs.udiskie}/bin/udiskie --tray --automount --notify";
-      };
-    };
-
-  };
 
   xdg = {
     enable = true;

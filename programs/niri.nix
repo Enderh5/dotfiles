@@ -82,6 +82,7 @@ in
     // spawn-at-startup  "zapzap"
     spawn-at-startup  "localsend_app --hidden"
     spawn-at-startup  "noctalia"
+    spawn-at-startup "dbus-update-activation-environment" "--systemd" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP" "XDG_SESSION_TYPE"
 
     // Programa que corre en background continuamente (similar a exec)
     spawn-at-startup  "wl-paste --watch cliphist store"
@@ -118,6 +119,7 @@ in
       XF86AudioNext { spawn-sh "playerctl next"; }
 
       Mod+Shift+apostrophe {show-hotkey-overlay;}
+      Mod+Shift+R {spawn-sh "killall noctalia; noctalia";}
 
       Mod+F { maximize-column;}
       Mod+Shift+F { fullscreen-window;}
@@ -140,8 +142,10 @@ in
       XF86MonBrightnessDown { spawn-sh "noctalia msg brightness-down"; }
       XF86MonBrightnessUp { spawn-sh "noctalia msg brightness-up"; }
 
-      // SCREENSHOT
-      Print {spawn-sh "slurp | grim -g - - | wl-copy";}
+      Print { spawn "noctalia" "msg" "screenshot-fullscreen"; }
+
+      // Capturar una región seleccionada usando Noctalia
+      Shift+Print { spawn "noctalia" "msg" "screenshot-region"; }
 
       // APLICACIONES
       Mod+Q { spawn "kitty"; }

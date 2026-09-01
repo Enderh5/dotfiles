@@ -100,7 +100,6 @@ in
               "bar_2"
               "bar"
               "tray"
-              "notifications"
             ];
             opacity = 1.0;
             padding = 6.0;
@@ -118,6 +117,7 @@ in
           end = [
             "media"
             "group:g1"
+            "notifications"
             "network"
             "bluetooth"
             "volume"
