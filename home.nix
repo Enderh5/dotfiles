@@ -98,8 +98,8 @@ in
     ./programs/sioyek.nix
     ./programs/zsh.nix
     ./programs/obsidian.nix
-    compositor
     ./programs/niri.nix
+    ./programs/hyprland.nix
     ./programs/starship.nix
     ./programs/tmux.nix
     ./programs/yazi.nix

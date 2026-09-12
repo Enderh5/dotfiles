@@ -83,7 +83,32 @@ in
               )
           end
 
+          hl.config({
+              debug = {
+                  disable_logs = false,
+              },
+          })
 
+          function toggleFullscreen()
+              local win = hl.get_active_window()
+              
+              -- Si no hay ventana enfocada, no hace nada
+              if not win or not win.size then return end
+              
+              -- Obtener el ancho del monitor activo
+              local mon = hl.get_active_monitor()
+              local mon_width = mon.size.width
+              
+              -- Si la ventana ya ocupa casi todo el ancho del monitor (>= 95%), la reduce al 50%.
+              -- Si no, la expande al 100%.
+              if win.size.x >= (mon_width * 0.95) then
+                hl.dispatch(hl.dsp.layout("colresize 0.5"))
+              else
+                hl.dispatch(hl.dsp.layout("colresize 1"))
+              end
+            end
+
+          hl.bind ("SUPER + F", toggleFullscreen)
         '';
       };
     };
@@ -93,7 +118,6 @@ in
       # MONITORS
       #
       monitor = monitors;
-
       #
       # ENVIRONMENT
       #
@@ -143,6 +167,12 @@ in
         binds = {
           scroll_event_delay = 0;
         };
+        device = [
+          {
+            name = "syna2ba6:00-06cb:ce2d-touchpad";
+            sensitivity = -0.5; # Ajusta la sensibilidad solo al touchpad (-1.0 a 1.0)
+          }
+        ];
         input = {
           kb_layout = "es";
           numlock_by_default = true;
@@ -166,8 +196,17 @@ in
 
           "col.active_border" = "rgb(${config.lib.stylix.colors.base0D})";
 
-          layout = "dwindle";
+          layout = "scrolling";
           allow_tearing = true;
+        };
+        scrolling = {
+          column_width = 0.5;
+          direction = "right";
+          fullscreen_on_one_column = true;
+        };
+        gestures = {
+          workspace_swipe_forever = true;
+          workspace_swipe_create_new = true;
         };
 
         decoration = {
@@ -283,7 +322,29 @@ in
       #
       # BINDS
       #
-
+      gesture = [
+        {
+          fingers = 3;
+          direction = "vertical";
+          action = "workspace";
+          scale = 0.6;
+        }
+        {
+          fingers = 3;
+          direction = "horizontal";
+          action = "scroll_move";
+          scale = 0.6;
+        }
+      ];
+      animation = [
+        {
+          leaf = "workspaces";
+          enabled = true;
+          speed = 8;
+          bezier = "default";
+          style = "slidevert";
+        }
+      ];
       bind = [
         # Media
         {
@@ -466,13 +527,6 @@ in
           ];
         }
 
-        {
-          _args = [
-            "SUPER  + F"
-            (mkLuaInline "hl.dsp.window.fullscreen(0)")
-          ];
-        }
-
         # Focus
         {
           _args = [
@@ -491,14 +545,14 @@ in
         {
           _args = [
             "SUPER + K"
-            (mkLuaInline ''hl.dsp.focus({direction = "up"})'')
+            (mkLuaInline ''hl.dsp.focus({workspace = "m-1"})'')
           ];
         }
 
         {
           _args = [
             "SUPER + J"
-            (mkLuaInline ''hl.dsp.focus({direction = "down"})'')
+            (mkLuaInline ''hl.dsp.focus({workspace = "m+1"})'')
           ];
         }
 
@@ -520,14 +574,14 @@ in
         {
           _args = [
             "SUPER + SHIFT + K"
-            (mkLuaInline ''hl.dsp.window.move({direction = "up"})'')
+            (mkLuaInline ''hl.dsp.window.move({workspace = "m-1"})'')
           ];
         }
 
         {
           _args = [
             "SUPER + SHIFT + J"
-            (mkLuaInline ''hl.dsp.window.move({direction = "down"})'')
+            (mkLuaInline ''hl.dsp.window.move({workspace = "m+1"})'')
           ];
         }
 

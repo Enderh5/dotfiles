@@ -87,7 +87,34 @@ let
 
       ]
     else
-      [ ];
+      [
+        {
+          action = "lock";
+          shortcut = "1";
+        }
+        {
+          action = "logout";
+          command = "hyprshutdown";
+          shortcut = "2";
+        }
+        {
+          action = "lock_and_suspend";
+          shortcut = "3";
+        }
+
+        {
+          action = "reboot";
+          command = "hyprshutdown --post-cmd 'systemctl reboot' -t 'Reiniciando Equipo'";
+          shortcut = "4";
+        }
+        {
+          action = "shutdown";
+          command = "hyprshutdown -t 'Apagando equipo' --post-cmd 'systemctl poweroff'";
+          variant = "destructive";
+          shortcut = "5";
+        }
+
+      ];
 in
 {
 
