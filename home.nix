@@ -1,5 +1,6 @@
 {
   pkgs,
+  hostName,
   ...
 }:
 let
@@ -12,9 +13,11 @@ let
       exec ${pkgs.prismlauncher}/bin/prismlauncher --import "$@"
     fi
   '';
+
+  compositor = if hostName == "roderico" then ./programs/hyprland.nix else ./programs/niri.nix;
+
 in
 {
-
   home = {
     username = "rodrigo";
     homeDirectory = HOME;
@@ -22,13 +25,17 @@ in
     stateVersion = "26.05";
 
     packages = with pkgs; [
+      discord
+      concord-tui
+      libGL
+      mesa
+
       localsend
 
       #Uni
       postman
       geogebra6
       nerd-fonts.jetbrains-mono
-      texliveFull
 
       #SO
       adwaita-icon-theme
@@ -70,8 +77,9 @@ in
       fastfetch
 
       prismlauncher
-      temurin-bin-21
+      temurin-bin-17
 
+      nemo
     ];
 
     sessionVariables = {
@@ -80,6 +88,7 @@ in
       XDG_DATA_DIRS = ''
         $XDG_DATA_DIRS:/var/lib/flatpak/exports/share:/home/rodrigo/.local/share/flatpak/exports/share
       '';
+      HOSTNAME = hostName;
     };
 
   };
@@ -89,6 +98,7 @@ in
     ./programs/sioyek.nix
     ./programs/zsh.nix
     ./programs/obsidian.nix
+    compositor
     ./programs/niri.nix
     ./programs/starship.nix
     ./programs/tmux.nix

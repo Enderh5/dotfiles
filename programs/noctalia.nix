@@ -55,6 +55,39 @@ let
       ]
     else
       [ ];
+  isNiriEnabled = if hostName == "roderico" then true else true;
+  sessionActions =
+    if hostName == "roderico" then
+      [
+        {
+          action = "lock";
+          shortcut = "1";
+        }
+        {
+          action = "logout";
+          command = "hyprshutdown";
+          shortcut = "2";
+        }
+        {
+          action = "lock_and_suspend";
+          shortcut = "3";
+        }
+
+        {
+          action = "reboot";
+          command = "hyprshutdown --post-cmd 'systemctl reboot' -t 'Reiniciando Equipo'";
+          shortcut = "4";
+        }
+        {
+          action = "shutdown";
+          command = "hyprshutdown -t 'Apagando equipo' --post-cmd 'systemctl poweroff'";
+          variant = "destructive";
+          shortcut = "5";
+        }
+
+      ]
+    else
+      [ ];
 in
 {
 
@@ -76,12 +109,13 @@ in
       };
 
       shell = {
+        session.actions = sessionActions;
         launcher = {
           app_grid = true;
           show_app_actions = true;
         };
         polkit_agent = true;
-        niri_overview_type_to_launch_enabled = true;
+        niri_overview_type_to_launch_enabled = isNiriEnabled;
       };
 
       bar = {

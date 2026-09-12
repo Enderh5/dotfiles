@@ -12,7 +12,6 @@ let
             mode "1920x1080@60.000"
             scale 1.0
             position x=0 y=1080
-            variable-refresh-rate on-demand=true
             focus-at-startup
             backdrop-color "${config.lib.stylix.colors.base00}"
 
@@ -24,7 +23,6 @@ let
             mode "1920x1080@144"
             scale 1.0
             position x=0 y=0
-            variable-refresh-rate on-demand=true
             backdrop-color "${config.lib.stylix.colors.base00}"
 
             hot-corners {
@@ -39,7 +37,6 @@ let
             mode "1920x1080@144"
             scale 1.0
             position x=0 y=0
-            variable-refresh-rate on-demand=true
             backdrop-color "${config.lib.stylix.colors.base00}"
 
             hot-corners {
@@ -49,10 +46,9 @@ let
 
         output "HDMI-A-2" {
             // off
-            mode "1366x769@59.790"
+            mode "1366x768@59.790"
             scale 1.0
             position x=1920 y=600
-            variable-refresh-rate on-demand=true
             backdrop-color "${config.lib.stylix.colors.base00}"
 
             hot-corners {
@@ -119,7 +115,7 @@ in
       XF86AudioNext { spawn-sh "playerctl next"; }
 
       Mod+Shift+apostrophe {show-hotkey-overlay;}
-      Mod+Shift+R {spawn-sh "killall noctalia; noctalia";}
+      Mod+Shift+R {spawn-sh "pkill noctalia; noctalia";}
 
       Mod+F { maximize-column;}
       Mod+Shift+F { fullscreen-window;}

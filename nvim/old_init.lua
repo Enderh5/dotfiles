@@ -256,6 +256,7 @@ require('lazy').setup({
         nixd = {
           filetypes = { 'nix' },
           cmd = { 'nixd' },
+          capabilities = capabilities,
           settings = {
             nixd = {
               nixpkgs = {
@@ -266,13 +267,32 @@ require('lazy').setup({
               },
               options = {
                 nixos = {
-                  expr = '(builtins.getFlake "/etc/nixos/").nixosConfigurations.default.options',
+                  expr = [[
+                  let
+                    flake = builtins.getFlake "/etc/nixos/";
+                    hostname = builtins.getEnv "HOSTNAME";
+                  in
+                  flake.nixosConfigurations.${hostname}.options
+                  ]],
                 },
                 ['home-manager'] = {
-                  expr = '(builtins.getFlake "/home/rodrigo/home-flake/").homeConfigurations.rodrigo.options',
+                  expr = [[
+                  let
+                    hostname = builtins.getEnv "HOSTNAME";
+                    username = builtins.getEnv "USER";
+                    flake = builtins.getFlake "/home/${username}/home-flake";
+                  in
+                  flake.homeConfigurations."${username}@${hostname}".options
+                  ]],
                 },
                 ['config'] = {
-                  expr = '(builtins.getFlake "/home/rodrigo/home-flake/").homeConfigurations.rodrigo.config.lib.stylix',
+                  expr = [[
+                  let
+                    hostname = builtins.getEnv "HOSTNAME";
+                    username = builtins.getEnv "USER";
+                    flake = builtins.getFlake "/home/${username}/home-flake";
+                  in
+                  flake.homeConfigurations."${username}@${hostname}".config.lib.stylix]],
                 },
               },
             },

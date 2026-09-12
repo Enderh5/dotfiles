@@ -31,6 +31,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    hyprland.url = "github:hyprwm/Hyprland";
+    split-monitor-workspaces.url = "github:zjeffer/split-monitor-workspaces";
   };
 
   outputs =
@@ -38,6 +40,7 @@
       nixpkgs,
       stylix,
       home-manager,
+      hyprland,
       ...
     }@inputs:
     let
@@ -53,6 +56,13 @@
         "rodrigo@roderico" = home-manager.lib.homeManagerConfiguration {
           pkgs = pkgs;
           modules = [
+            {
+              wayland.windowManager.hyprland = {
+                package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+                portalPackage =
+                  inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+              };
+            }
             inputs.noctalia.homeModules.default
             stylix.homeModules.stylix
             ./home.nix
