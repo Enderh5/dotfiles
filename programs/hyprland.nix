@@ -8,6 +8,10 @@
 }:
 
 let
+  hypr-kdeconnect-fix = pkgs.callPackage ../pkgs/hypr-kdeconnect-fix/hypr-kdeconnect-fix.nix {
+    src = inputs.hypr-kdeconnect-fix;
+  };
+
   mkLuaInline = lib.generators.mkLuaInline;
 
   monitors =
@@ -57,7 +61,10 @@ in
     hyprsysteminfo
     hyprpwcenter
     hyprshutdown
+    hypr-kdeconnect-fix
   ];
+
+  xdg.portal.extraPortals = [ hypr-kdeconnect-fix ];
 
   wayland.windowManager.hyprland = {
     enable = true;
@@ -153,8 +160,9 @@ in
             function()
               hl.exec_cmd("libinput-gestures")
               hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE")
-              hl.exec_cmd("sh -c 'until gdbus call --system --dest org.bluez --object-path / --method org.freedesktop.DBus.Introspectable.Introspect >/dev/null 2>&1; do sleep 0.2; done; exec noctalia --daemon'")
               hl.exec_cmd("localsend_app --hidden")
+              hl.exec_cmd("systemctl --user restart kdeconnect")
+              hl.exec_cmd("sh -c 'until gdbus call --system --dest org.bluez --object-path / --method org.freedesktop.DBus.Introspectable.Introspect >/dev/null 2>&1; do sleep 0.2; done; exec noctalia --daemon'")
             end
           '')
         ];

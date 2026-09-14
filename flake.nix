@@ -33,6 +33,9 @@
 
     hyprland.url = "github:hyprwm/Hyprland";
     split-monitor-workspaces.url = "github:zjeffer/split-monitor-workspaces";
+    hypr-kde-connect-fix = {
+      url = "github:gfhdhytghd/hypr-kdeconnect-fix";
+    };
   };
 
   outputs =
