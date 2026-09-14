@@ -57,6 +57,8 @@ let
 in
 {
   home.packages = with pkgs; [
+    kdePackages.krdc
+    kdePackages.krdp
     playerctl
     hyprsysteminfo
     hyprpwcenter
