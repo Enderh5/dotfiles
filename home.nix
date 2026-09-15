@@ -23,7 +23,6 @@ in
     stateVersion = "26.05";
 
     packages = with pkgs; [
-      weylus
       xournalpp
 
       bitwarden-desktop
@@ -110,6 +109,7 @@ in
     ./programs/nvim.nix
     ./programs/webapps.nix
     ./programs/noctalia.nix
+    ./pkgs/waylus-slop.nix
   ];
 
   xdg = {
