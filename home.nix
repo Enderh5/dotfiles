@@ -14,8 +14,6 @@ let
     fi
   '';
 
-  compositor = if hostName == "roderico" then ./programs/hyprland.nix else ./programs/niri.nix;
-
 in
 {
   home = {
@@ -25,6 +23,7 @@ in
     stateVersion = "26.05";
 
     packages = with pkgs; [
+      bitwarden-desktop
       discord
       concord-tui
       libGL
@@ -103,7 +102,7 @@ in
     ./programs/starship.nix
     ./programs/tmux.nix
     ./programs/yazi.nix
-    #./programs/zathura.nix
+    ./programs/keyring.nix
     ./programs/kitty.nix
     ./programs/nvim.nix
     ./programs/webapps.nix

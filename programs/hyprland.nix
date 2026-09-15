@@ -257,6 +257,11 @@ in
             920
           ];
         }
+        {
+          match.class = "bitwarden";
+          float = true;
+
+        }
 
         {
           match.class = "org.kde.dolphin";
