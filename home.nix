@@ -23,6 +23,9 @@ in
     stateVersion = "26.05";
 
     packages = with pkgs; [
+      weylus
+      xournalpp
+
       bitwarden-desktop
       discord
       concord-tui

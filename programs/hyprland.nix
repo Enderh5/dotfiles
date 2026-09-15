@@ -118,6 +118,43 @@ in
             end
 
           hl.bind ("SUPER + F", toggleFullscreen)
+
+          local rules = {
+            { width = 30, height = 54, patterns = {
+                "^Extensión: %(Bitwarden.*%) %- Bitwarden",
+                "^Bitwarden$",
+            }},
+              
+          }
+
+          local function matches(title, rule)
+            for _, pattern in ipairs(rule.patterns) do
+              if title:match(pattern) then return true end
+            end
+            return false
+          end
+
+          hl.on("window.title", function(window)
+            local title = window.title or ""
+            for _, rule in ipairs(rules) do
+              if matches(title, rule) then
+                local monitor = hl.get_active_monitor()
+                if not monitor then return end
+
+                hl.dispatch(hl.dsp.window.float({  window = window, action = "on" }))
+                hl.dispatch(hl.dsp.window.center({ window = window, action = "on" }))
+                hl.dispatch(hl.dsp.window.resize({
+                  window = window,
+                  x = math.floor(monitor.width  * rule.width  / 100),
+                  y = math.floor(monitor.height * rule.height / 100),
+                }))
+                return
+              end
+            end
+          end)
+          hl.on("window.title", function(window)
+              print("TITLE EVENT:", window.title)
+          end)
         '';
       };
     };
@@ -257,12 +294,6 @@ in
             920
           ];
         }
-        {
-          match.class = "bitwarden";
-          float = true;
-
-        }
-
         {
           match.class = "org.kde.dolphin";
           float = true;
