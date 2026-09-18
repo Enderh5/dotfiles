@@ -163,4 +163,15 @@ in
 
   };
 
+  programs.git = {
+    enable = true;
+    settings = {
+      # Define la regla del driver para que Git sepa qué script ejecutar
+      "merge \"flake-lock\"" = {
+        name = "Elegir flake.lock más reciente";
+        driver = "./scripts/merge-flake-lock.sh %A %B";
+      };
+    };
+  };
+
 }
