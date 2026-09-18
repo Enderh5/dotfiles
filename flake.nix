@@ -37,6 +37,7 @@
       url = "github:gfhdhytghd/hypr-kdeconnect-fix";
       flake = false;
     };
+
   };
 
   outputs =

@@ -27,6 +27,7 @@ in
       rnote
 
       bitwarden-desktop
+      weylus
       discord
       concord-tui
       libGL
