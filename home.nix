@@ -24,6 +24,7 @@ in
 
     packages = with pkgs; [
       xournalpp
+      rnote
 
       bitwarden-desktop
       discord
@@ -109,7 +110,6 @@ in
     ./programs/nvim.nix
     ./programs/webapps.nix
     ./programs/noctalia.nix
-    ./pkgs/waylus-slop.nix
   ];
 
   xdg = {
