@@ -46,5 +46,6 @@
       export VISUAL='nvim'
       export GRIM_DEFAULT_DIR='~/Pictures/Screenshots'
     '';
+    setOptions = [ "INTERACTIVE_COMMENTS" ];
   };
 }
