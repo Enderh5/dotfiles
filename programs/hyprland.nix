@@ -118,6 +118,7 @@ in
             end
 
           hl.bind ("SUPER + F", toggleFullscreen)
+          hl.bind ("SUPER + SHIFT + F", hl.dsp.window.fullscreen())
 
           local rules = {
             { width = 30, height = 54, patterns = {
@@ -294,6 +295,29 @@ in
             920
           ];
         }
+        {
+          match = {
+            class = "org.kde.kdeconnect.daemon";
+          };
+          opacity = "1.0";
+          no_blur = true;
+          border_size = 0;
+          no_shadow = true;
+          no_anim = true;
+          no_focus = true;
+          fullscreen_state = 0;
+          float = true;
+          pin = true;
+          min_size = [
+            "monitor_w"
+            "monitor_h"
+          ];
+          move = [
+            0
+            0
+          ];
+        }
+
         {
           match.class = "org.kde.dolphin";
           float = true;
@@ -520,7 +544,7 @@ in
         {
           _args = [
             "SUPER + E"
-            (mkLuaInline ''hl.dsp.exec_cmd("nautilus")'')
+            (mkLuaInline ''hl.dsp.exec_cmd("thunar")'')
           ];
         }
 
