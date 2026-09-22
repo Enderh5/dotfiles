@@ -277,22 +277,26 @@ require('lazy').setup({
                 },
                 ['home-manager'] = {
                   expr = [[
-                  let
-                    hostname = builtins.getEnv "HOSTNAME";
-                    username = builtins.getEnv "USER";
-                    flake = builtins.getFlake "/home/${username}/home-flake";
-                  in
-                  flake.homeConfigurations."${username}@${hostname}".options
+                    let
+                      rawUser = builtins.getEnv "USER";
+                      # Si se ejecuta con sudo, fuerza tu usuario real de Linux
+                      username = if rawUser == "root" then "tu-usuario" else rawUser;
+                      hostname = builtins.getEnv "HOSTNAME";
+                      flake = builtins.getFlake "/home/${username}/home-flake";
+                    in
+                    flake.homeConfigurations."${username}@${hostname}".options
                   ]],
                 },
                 ['config'] = {
                   expr = [[
-                  let
-                    hostname = builtins.getEnv "HOSTNAME";
-                    username = builtins.getEnv "USER";
-                    flake = builtins.getFlake "/home/${username}/home-flake";
-                  in
-                  flake.homeConfigurations."${username}@${hostname}".config.lib.stylix]],
+                    let
+                      rawUser = builtins.getEnv "USER";
+                      username = if rawUser == "root" then "tu-usuario" else rawUser;
+                      hostname = builtins.getEnv "HOSTNAME";
+                      flake = builtins.getFlake "/home/${username}/home-flake";
+                    in
+                    flake.homeConfigurations."${username}@${hostname}".config.lib.stylix
+                  ]],
                 },
               },
             },

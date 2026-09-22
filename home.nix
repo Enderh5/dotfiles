@@ -69,7 +69,6 @@ in
       chromium
 
       xfce4-exo
-      gvfs
       udisks2
 
       nix-direnv
@@ -98,6 +97,7 @@ in
 
   imports = [
     ./stylix.nix
+    ./programs/thunar.nix
     ./programs/sioyek.nix
     ./programs/zsh.nix
     ./programs/obsidian.nix
