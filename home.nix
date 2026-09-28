@@ -23,8 +23,7 @@ in
     stateVersion = "26.05";
 
     packages = with pkgs; [
-      xournalpp
-      rnote
+      devenv
 
       bitwarden-desktop
       weylus

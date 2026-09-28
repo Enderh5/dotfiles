@@ -10,6 +10,9 @@
     settings = {
       enable_audio_bell = false;
     };
+    keybindings = {
+      "ctrl+alt+d" = "no_op";
+    };
   };
 
   xdg.desktopEntries.kitty = {

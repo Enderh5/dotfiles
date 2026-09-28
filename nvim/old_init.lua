@@ -1,6 +1,8 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+vim.opt.exrc = true
+
 vim.g.have_nerd_font = true
 
 vim.opt.number = true
@@ -172,12 +174,13 @@ require('lazy').setup({
     config = function()
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
-
+      local nixd_root = vim.fs.root(0, {
+        'flake.nix',
+        'shell.nix',
+        'default.nix',
+        '.git',
+      })
       local servers = {
-        -- marksman = {
-        --   nombre = 'marksman',
-        -- },
-        --
         wgsl_analyzer = {
           filetypes = { 'wgsl' },
           command = { 'wgsl-analyzer' },
@@ -194,6 +197,24 @@ require('lazy').setup({
             Lua = {
               completion = {
                 callSnippet = 'Replace',
+                runtime = {
+                  version = 'LuaJIT',
+                },
+
+                workspace = {
+                  checkThirdParty = false,
+                  library = {
+                    vim.env.VIMRUNTIME,
+                  },
+                },
+
+                diagnostics = {
+                  globals = { 'vim' },
+                },
+
+                telemetry = {
+                  enable = false,
+                },
               },
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
               -- diagnostics = { disable = { 'missing-fields' } },
@@ -204,37 +225,6 @@ require('lazy').setup({
           filetypes = { 'r' },
           settings = {},
         },
-        -- nil_ls = {
-        --   settings = {},
-        -- },
-
-        -- pylsp = {
-        --   filetypes = { 'py', 'python' },
-        --   cmd = { 'pylsp' },
-        --   settings = {
-        --     pylsp = {
-        --       plugins = {
-        --         -- formatter options
-        --         black = { enabled = false },
-        --         autopep8 = { enabled = false },
-        --         yapf = { enabled = false },
-        --         -- linter options
-        --         pylint = { enabled = false, executable = 'pylint' },
-        --         pyflakes = { enabled = false },
-        --         pycodestyle = { enabled = false },
-        --         -- type checker
-        --         pylsp_mypy = { enabled = true },
-        --         -- auto-completion options
-        --         jedi_completion = { enabled = true, fuzzy = true },
-        --         -- import sorting
-        --         pyls_isort = { enabled = true },
-        --       },
-        --     },
-        --   },
-        --   flags = {
-        --     debounce_text_changes = 200,
-        --   },
-        -- },
         pyright = {
           filetypes = { 'py', 'python' },
           cmd = { 'pyright-langserver', '--stdio' },
@@ -257,6 +247,7 @@ require('lazy').setup({
           filetypes = { 'nix' },
           cmd = { 'nixd' },
           capabilities = capabilities,
+
           settings = {
             nixd = {
               nixpkgs = {
@@ -287,6 +278,16 @@ require('lazy').setup({
                     flake.homeConfigurations."${username}@${hostname}".options
                   ]],
                 },
+                devenv = {
+                  expr = [[
+                    let
+                      root = builtins.getEnv "DEVENV_ROOT";
+                      devenv = import "${root}/.devenv/bootstrap/default.nix" {};
+                    in
+                    devenv.project.options
+                ]],
+                },
+
                 ['config'] = {
                   expr = [[
                     let
@@ -314,13 +315,7 @@ require('lazy').setup({
       }
       for k, s in pairs(servers) do
         vim.lsp.config(k, s)
-        vim.api.nvim_create_autocmd('FileType', {
-          pattern = s.filetypes,
-          callback = function()
-            local config = vim.lsp.config(k, s)
-            vim.lsp.start(s)
-          end,
-        })
+        vim.lsp.enable(k)
       end
 
       -- lspconfig.marksman.setup {

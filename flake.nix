@@ -38,6 +38,7 @@
       flake = false;
     };
 
+    devenv.url = "github:cachix/devenv";
   };
 
   outputs =
@@ -69,6 +70,7 @@
               };
             }
             inputs.noctalia.homeModules.default
+            inputs.devenv.packages.${pkgs.stdenv.hostPlatform.system}.devenv
             stylix.homeModules.stylix
             ./home.nix
           ];

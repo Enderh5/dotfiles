@@ -36,6 +36,9 @@
         if command -v direnv > /dev/null; then
           eval "$(direnv hook zsh)"
         fi
+        if command -v devenv > /dev/null; then
+          eval "$(devenv hook zsh)"
+        fi
       fi
       # --- FIN DEL BLOQUE NIXOS ---      
 
