@@ -26,6 +26,7 @@ in
       devenv
 
       bitwarden-desktop
+      bitwarden-cli
       weylus
       discord
       concord-tui
