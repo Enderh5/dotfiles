@@ -82,6 +82,7 @@ in
       temurin-bin-17
 
       nemo
+      python3
     ];
 
     sessionVariables = {
