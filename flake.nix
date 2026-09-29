@@ -70,7 +70,6 @@
               };
             }
             inputs.noctalia.homeModules.default
-            inputs.devenv.packages.${pkgs.stdenv.hostPlatform.system}.devenv
             stylix.homeModules.stylix
             ./home.nix
           ];

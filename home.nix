@@ -1,6 +1,7 @@
 {
   pkgs,
   hostName,
+  inputs,
   ...
 }:
 let
@@ -23,7 +24,7 @@ in
     stateVersion = "26.05";
 
     packages = with pkgs; [
-      devenv
+      inputs.devenv.packages.${pkgs.stdenv.hostPlatform.system}.devenv
 
       bitwarden-desktop
       bitwarden-cli
