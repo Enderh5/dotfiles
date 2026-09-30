@@ -9,6 +9,7 @@
     shellIntegration.enableZshIntegration = true;
     settings = {
       enable_audio_bell = false;
+      remember_window_size = false;
     };
     keybindings = {
       "ctrl+alt+d" = "no_op";
