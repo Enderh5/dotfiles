@@ -4,6 +4,7 @@
   pkgs,
   user,
   hostName,
+  inputs,
   ...
 }:
 let
@@ -117,7 +118,6 @@ let
       ];
 in
 {
-
   home.packages = with pkgs; [
     sshfs
     glib

@@ -70,7 +70,6 @@
               };
             }
             inputs.noctalia.homeModules.default
-            inputs.devenv.packages.${pkgs.stdenv.hostPlatform.system}.devenv
             stylix.homeModules.stylix
             ./home.nix
           ];
@@ -82,7 +81,7 @@
         "rodrigo@pcdrdg" = home-manager.lib.homeManagerConfiguration {
           pkgs = pkgs;
           modules = [
-            inputs.noctalia.homeModules.default
+            #inputs.noctalia.homeModules.default
             stylix.homeModules.stylix
             ./home.nix
           ];
